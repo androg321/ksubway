@@ -55,9 +55,9 @@ async function initApp() {
       "--line-color",
       LINE_CONFIG.color
     );
-    document.getElementById(
-      "headerTitle"
-    ).innerText = `🚇 ${LINE_CONFIG.name} 인증기`;
+    // document.getElementById(
+    //   "headerTitle"
+    // ).innerText = `🚇 ${LINE_CONFIG.name} 인증기`;
     document.getElementById(
       "progressTitle"
     ).innerText = `${LINE_CONFIG.name} 인증 진행도: `;

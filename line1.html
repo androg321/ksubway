@@ -6,10 +6,26 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>서울 지하철 모바일 인증</title>
+    <title>서울 지하철 모바일 인증 - 1호선</title>
     <!-- 공통 스타일시트 연동 -->
     <link rel="stylesheet" href="transfer-badges.css" />
     <link rel="stylesheet" href="line-core.css" />
+    <style>
+      /* 1호선 심플 배지 스타일 */
+      .header-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background-color: #0052a4;
+        color: #ffffff;
+        border-radius: 50%;
+        font-weight: 800;
+        font-size: 0.95rem;
+        line-height: 1;
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -19,7 +35,9 @@
             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
           </svg>
         </a>
-        <span id="headerTitle">🚇 호선 인증기</span>
+        <span id="headerTitle">
+          <span class="header-badge">1</span>
+        </span>
       </div>
       <a href="mypage.html" class="mypage-btn">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -36,10 +54,6 @@
 
     <!-- 스크립트에서 동적으로 탭 생성 -->
     <div class="line-tabs" id="tabContainer"></div>
-
-    <p class="description">
-      원하는 계통을 선택한 뒤 역을 탭하여 위치를 인증하세요.
-    </p>
 
     <!-- 스크롤이 전용으로 동작하는 역 목록 영역 -->
     <div class="station-container" id="stationList"></div>
@@ -88,9 +102,8 @@
       const LINE_CONFIG = {
         id: "line1",
         name: "1호선",
-        color: "#2563eb",
+        color: "#0052A4",
         storageKey: "line1_verified_stations",
-        // 💡 해당 노선의 탭에서 발행한 CSV URL 추가
         csvUrl:
           "https://docs.google.com/spreadsheets/d/e/2PACX-1vSsEzg3A43H5aeKr_s_LY4H-2l8tz-zqr8tDzkpF4JkRdKdg_tU9TM8cxraMQY8VqFHEPDiE3muUB-X/pub?gid=1392561955&single=true&output=csv",
         tabs: [
