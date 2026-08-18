@@ -85,18 +85,19 @@
     <script src="stations.js"></script>
     <script src="transfer-badges.js"></script>
     <script>
-      // 1호선 전용 설정
       const LINE_CONFIG = {
-        id: "1",
+        id: "line1",
         name: "1호선",
-        color: "#2563eb", // 1호선 대표 색상 (파란색)
+        color: "#2563eb",
         storageKey: "line1_verified_stations",
-        routesData: lineRoutes["line1"],
+        // 💡 해당 노선의 탭에서 발행한 CSV URL 추가
+        csvUrl:
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vSsEzg3A43H5aeKr_s_LY4H-2l8tz-zqr8tDzkpF4JkRdKdg_tU9TM8cxraMQY8VqFHEPDiE3muUB-X/pub?gid=1392561955&single=true&output=csv",
         tabs: [
           { id: "main", name: "연천-신창" },
-          { id: "incheon", name: "구로-인천" },
-          { id: "gwangmyeong", name: "금천구청-광명" },
-          { id: "seodongtan", name: "병점-서동탄" },
+          { id: "gyeongin", name: "구로-인천(경인)" },
+          { id: "gm", name: "금천구청-광명" },
+          { id: "sd", name: "병점-서동탄" },
         ],
       };
     </script>

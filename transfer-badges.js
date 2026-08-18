@@ -1,3 +1,7 @@
+// ==========================================
+// transfer-badges.js (구글 시트 E열 자동 연동 버전)
+// ==========================================
+
 /* 노선별 대표 고유 색상 매핑 */
 const LINE_COLORS = {
   1: "#0052A4",
@@ -21,79 +25,46 @@ const LINE_COLORS = {
   서해: "#81A914",
   "GTX-A": "#9A1E46",
   경강: "#0066B3",
-  신림: "#6789CA",
   인천1: "#7CA8D5",
   인천2: "#ED8B00",
   일반열차: "#585858",
 };
 
-/* 모든 노선 정보를 포함한 전체 환승역 데이터베이스 */
-const ALL_STATION_TRANSFERS = {
-  광운대: ["1", "경춘"],
-  시청: ["1", "2"],
-  종로3가: ["1", "3", "5"],
-  동대문: ["1", "4"],
-  대방: ["1", "신림"],
-  창동: ["1", "4"],
-  도봉산: ["1", "7"],
-  서울역: ["1", "4", "경의중앙", "공항철도", "GTX-A", "KTX", "일반열차"],
-  용산: ["1", "경의중앙", "KTX", "일반열차"],
-  노량진: ["1", "9"],
-  신도림: ["1", "2"],
-  가산디지털단지: ["1", "7"],
-  온수: ["1", "7"],
-  부평: ["1", "인천1"],
-  인천: ["1", "수인분당"],
-  금정: ["1", "4"],
-  안양: ["1", "일반철도"],
-  오산: ["1", "일반철도"],
-  서정리: ["1", "일반철도"],
-  평택: ["1", "일반철도"],
-  평택지제: ["1", "KTX"],
-  성환: ["1", "일반철도"],
-  천안: ["1", "일반철도"],
-  광명: ["1", "KTX"],
-  아산: ["1", "일반철도"],
-  온양온천: ["1", "일반철도"],
-  신창: ["1", "일반철도"],
-  수원: ["1", "수인분당", "KTX", "일반열차"],
-  청량리: ["1", "수인분당", "경의중앙", "경춘", "KTX", "일반열차"],
-  회기: ["1", "경의중앙", "경춘"],
-  석계: ["1", "6"],
-  신설동: ["1", "2", "우이신설"],
-  동묘앞: ["1", "6"],
-  소사: ["1", "서해"],
-  신길: ["1", "5"],
-  초지: ["4", "수인분당", "서해"],
-  영등포: ["1", "KTX", "일반열차"],
-  교대: ["2", "3"],
-  고속터미널: ["3", "7", "9"],
-  합정: ["2", "6"],
-  사당: ["2", "4"],
-  왕십리: ["2", "5", "경의중앙", "수인분당"],
-  회룡: ["의정부경전철"],
-};
-
 /**
- * 역 정보와 현재 페이지의 노선 정보를 받아 해당 노선을 제외한 환승 배지 HTML을 생성
- * @param {Object} station - 역 객체 ({ name: '시청' })
- * @param {string|number} currentLine - 현재 페이지 노선 (예: "1", "1호선", "2" 등)
+ * 역 정보(station)와 현재 페이지 노선(currentLine)을 받아 환승 배지 HTML 생성
+ * @param {Object} station - 역 정보 객체 (예: { name: '서울역', line: '1/4/경의중앙/공항철도/GTX-A/KTX/일반열차' })
+ * @param {string|number} currentLine - 현재 페이지 노선 (예: "line1", "1", "1호선" 등)
  * @returns {string} 환승 배지 HTML
  */
 function getTransferBadgesHtml(station, currentLine) {
-  // 현재 노선 문자열 정규화 ("1호선" -> "1")
-  const normalizedCurrentLine = String(currentLine).replace("호선", "").trim();
+  if (!station) return "";
 
-  // 역 자체 설정 정보가 없으면 전체 DB 참조
-  const allTransfers = station.transfers || ALL_STATION_TRANSFERS[station.name];
+  // 1. 역 객체의 transfers 배열이 있거나, 구글 시트 E열(line: "1/4/경의중앙")을 슬래시 구분자로 자동 파싱
+  let rawTransfers = [];
+  if (Array.isArray(station.transfers)) {
+    rawTransfers = station.transfers;
+  } else if (station.line) {
+    rawTransfers = station.line.split("/").map((item) => item.trim());
+  }
 
-  if (!allTransfers || allTransfers.length === 0) return "";
+  if (rawTransfers.length === 0) return "";
 
-  // 현재 페이지의 노선 제외
-  const filteredTransfers = allTransfers.filter(
-    (line) => String(line).replace("호선", "").trim() !== normalizedCurrentLine
+  // 2. 현재 노선 문자열 정규화 ("line1" -> "1", "1호선" -> "1")
+  const normalizedCurrentLine = String(currentLine)
+    .replace("line", "")
+    .replace("호선", "")
+    .trim();
+
+  // 3. 현재 페이지 노선 마크는 제외
+  const filteredTransfers = rawTransfers.filter(
+    (line) =>
+      String(line).replace("line", "").replace("호선", "").trim() !==
+      normalizedCurrentLine
   );
 
+  if (filteredTransfers.length === 0) return "";
+
+  // 4. 환승 배지 HTML 동적 생성
   const badges = filteredTransfers.map((line) => {
     if (line === "KTX") {
       return `
@@ -105,7 +76,7 @@ function getTransferBadgesHtml(station, currentLine) {
     }
 
     const color = LINE_COLORS[line] || "#666666";
-    const isLongText = line.length > 1;
+    const isLongText = String(line).length > 1;
     const badgeClass = isLongText ? "transfer-badge pill" : "transfer-badge";
     return `<span class="${badgeClass}" style="background-color: ${color};">${line}</span>`;
   });

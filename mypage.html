@@ -13,14 +13,12 @@
         -webkit-tap-highlight-color: transparent;
       }
       body {
-        font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, sans-serif;
+        font-family: "Pretendard", -apple-system, sans-serif;
         margin: 0;
         padding: 0;
         background-color: #f5f7f9;
         color: #111;
       }
-
       header {
         background-color: #ffffff;
         padding: 12px 16px;
@@ -34,13 +32,11 @@
         justify-content: space-between;
         align-items: center;
       }
-
       .header-left {
         display: flex;
         align-items: center;
         gap: 8px;
       }
-
       .back-btn {
         display: inline-flex;
         align-items: center;
@@ -50,30 +46,17 @@
         border-radius: 50%;
         color: #374151;
         text-decoration: none;
-        transition: background-color 0.2s ease, transform 0.1s ease;
       }
-
-      .back-btn:hover {
-        background-color: #f3f4f6;
-      }
-
-      .back-btn:active {
-        transform: scale(0.92);
-        background-color: #e5e7eb;
-      }
-
       .back-btn svg {
         width: 22px;
         height: 22px;
         fill: currentColor;
       }
-
       .container {
         padding: 20px 16px 40px 16px;
         max-width: 600px;
         margin: 0 auto;
       }
-
       .card {
         background-color: #ffffff;
         border-radius: 16px;
@@ -82,18 +65,15 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         border: 1px solid #e5e7eb;
       }
-
       .card-title {
         font-size: 1.05rem;
         font-weight: 700;
         color: #1f2937;
-        margin-top: 0;
-        margin-bottom: 14px;
+        margin: 0 0 14px 0;
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
       }
-
       .total-summary-box {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         color: #ffffff;
@@ -104,25 +84,21 @@
         flex-direction: column;
         gap: 10px;
       }
-
       .total-summary-header {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
       }
-
       .total-title {
         font-size: 0.9rem;
         font-weight: 600;
         color: #94a3b8;
       }
-
       .total-value {
         font-size: 1.4rem;
         font-weight: 800;
         color: #38bdf8;
       }
-
       .total-progress-bg {
         width: 100%;
         height: 10px;
@@ -130,7 +106,6 @@
         border-radius: 5px;
         overflow: hidden;
       }
-
       .total-progress-fill {
         height: 100%;
         width: 0%;
@@ -138,13 +113,11 @@
         border-radius: 5px;
         transition: width 0.4s ease;
       }
-
       .line-summary-grid {
         display: flex;
         flex-direction: column;
         gap: 12px;
       }
-
       .line-summary-card {
         background-color: #f8fafc;
         border: 1px solid #f1f5f9;
@@ -154,7 +127,6 @@
         align-items: center;
         gap: 14px;
       }
-
       .subway-badge {
         width: 40px;
         height: 40px;
@@ -166,34 +138,28 @@
         font-weight: 800;
         font-size: 0.95rem;
         flex-shrink: 0;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
       }
-
       .line-info-box {
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: 6px;
       }
-
       .line-info-top {
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
-
       .line-name {
         font-size: 0.95rem;
         font-weight: 700;
         color: #1e293b;
       }
-
       .line-count-percent {
         font-size: 0.85rem;
         font-weight: 700;
         color: #475569;
       }
-
       .line-progress-bg {
         width: 100%;
         height: 6px;
@@ -201,14 +167,12 @@
         border-radius: 3px;
         overflow: hidden;
       }
-
       .line-progress-fill {
         height: 100%;
         width: 0%;
         border-radius: 3px;
         transition: width 0.4s ease;
       }
-
       textarea.backup-area {
         width: 100%;
         height: 90px;
@@ -221,7 +185,6 @@
         font-family: monospace;
         background-color: #f9fafb;
       }
-
       button.btn {
         width: 100%;
         padding: 14px;
@@ -230,42 +193,30 @@
         font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.2s, transform 0.1s;
       }
-
-      button.btn:active {
-        transform: scale(0.98);
-      }
-
       .btn-primary {
         background-color: #2563eb;
         color: white;
       }
-
       .btn-secondary {
         background-color: #f1f5f9;
         color: #1e293b;
         border: 1px solid #cbd5e1;
       }
-
       .btn-success {
         background-color: #10b981;
         color: white;
       }
-
       .btn-danger {
         background-color: #ef4444;
         color: white;
       }
-
       .info-text {
         font-size: 0.85rem;
         color: #6b7280;
         margin-bottom: 16px;
         line-height: 1.4;
       }
-
-      /* 모달 공통 스타일 */
       .modal-overlay {
         display: none;
         position: fixed;
@@ -281,22 +232,18 @@
         opacity: 0;
         transition: opacity 0.2s ease;
       }
-
       .modal-overlay.show {
         display: flex;
         opacity: 1;
       }
-
       .modal-content {
         background-color: white;
         width: 100%;
         max-width: 480px;
         border-radius: 16px;
         padding: 24px 20px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         position: relative;
       }
-
       .close-btn {
         position: absolute;
         top: 16px;
@@ -304,10 +251,7 @@
         font-size: 24px;
         cursor: pointer;
         color: #aaa;
-        line-height: 1;
       }
-
-      /* 가로 스크롤 대응 탭 스타일 */
       .tab-menu {
         display: flex;
         gap: 8px;
@@ -315,44 +259,27 @@
         border-bottom: 1px solid #e5e7eb;
         padding-bottom: 8px;
         overflow-x: auto;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
       }
-
-      .tab-menu::-webkit-scrollbar {
-        display: none;
-      }
-
       .tab-link {
         flex: 0 0 auto;
-        padding: 8px 14px;
+        padding: 8px 12px;
         background: none;
         border: none;
         font-size: 0.9rem;
         font-weight: 700;
         color: #6b7280;
         cursor: pointer;
-        text-align: center;
         border-bottom: 2px solid transparent;
       }
-
       .tab-link.active {
         color: #2563eb;
         border-bottom-color: #2563eb;
       }
-
-      .tab-content {
-        display: none;
-      }
-
-      .tab-content.active {
-        display: block;
-      }
-
+      .tab-content,
       .region-tab-content {
         display: none;
       }
-
+      .tab-content.active,
       .region-tab-content.active {
         display: block;
       }
@@ -371,12 +298,8 @@
     </header>
 
     <div class="container">
-      <!-- 종합 인증 현황 카드 -->
       <div class="card">
-        <div class="card-title">
-          <span>📊 종합 인증 현황</span>
-        </div>
-
+        <div class="card-title"><span>📊 종합 인증 현황</span></div>
         <div class="total-summary-box">
           <div class="total-summary-header">
             <span class="total-title">전체 수도권 지하철 달성률</span>
@@ -393,14 +316,11 @@
             / <span id="totalStationCount">0</span>개 역
           </div>
         </div>
-
-        <!-- 기존 직열 리스트 대신 모달 호출 버튼 배치 -->
         <button class="btn btn-secondary" onclick="openLineModal()">
           🔍 호선별 달성률 상세 보기
         </button>
       </div>
 
-      <!-- 데이터 관리 카드 -->
       <div class="card">
         <h3 class="card-title">💾 데이터 관리</h3>
         <p class="info-text">
@@ -412,12 +332,10 @@
         </button>
       </div>
 
-      <!-- 데이터 초기화 카드 -->
       <div class="card" style="border-color: #fecaca">
         <h3 class="card-title" style="color: #dc2626">⚠️ 데이터 초기화</h3>
         <p class="info-text">
-          이 기기에 저장된 모든 방문 인증 기록을 삭제합니다. 삭제 후에는 복원할
-          수 없습니다.
+          이 기기에 저장된 모든 방문 인증 기록을 삭제합니다.
         </p>
         <button class="btn btn-danger" onclick="resetData()">
           🗑️ 모든 데이터 초기화
@@ -425,7 +343,7 @@
       </div>
     </div>
 
-    <!-- 호선별 달성률 모달 (지역별 탭 포함) -->
+    <!-- 호선별 달성률 모달 -->
     <div id="lineModal" class="modal-overlay">
       <div
         class="modal-content"
@@ -435,8 +353,6 @@
         <h3 style="margin-top: 0; margin-bottom: 16px; color: #111">
           📊 호선별 인증 현황
         </h3>
-
-        <!-- 지역별 탭 메뉴 -->
         <div class="tab-menu" id="regionTabMenu">
           <button class="tab-link active" onclick="switchRegionTab('capital')">
             수도권
@@ -444,42 +360,14 @@
           <button class="tab-link" onclick="switchRegionTab('busan')">
             부산
           </button>
-          <button class="tab-link" onclick="switchRegionTab('daegu')">
-            대구
-          </button>
-          <button class="tab-link" onclick="switchRegionTab('daejeon')">
-            대전
-          </button>
-          <button class="tab-link" onclick="switchRegionTab('gwangju')">
-            광주
-          </button>
         </div>
-
-        <!-- 탭 별 콘텐츠 영역 (스크롤 가능) -->
         <div style="overflow-y: auto; flex: 1; padding-right: 2px">
-          <!-- 수도권 -->
           <div id="region-capital" class="region-tab-content active">
             <div class="line-summary-grid" id="lineSummaryGrid"></div>
           </div>
-          <!-- 기타 지역 (추후 데이터 확장 영역) -->
           <div id="region-busan" class="region-tab-content">
             <p class="info-text" style="text-align: center; padding: 40px 0">
               부산 도시철도 데이터 준비 중입니다.
-            </p>
-          </div>
-          <div id="region-daegu" class="region-tab-content">
-            <p class="info-text" style="text-align: center; padding: 40px 0">
-              대구 도시철도 데이터 준비 중입니다.
-            </p>
-          </div>
-          <div id="region-daejeon" class="region-tab-content">
-            <p class="info-text" style="text-align: center; padding: 40px 0">
-              대전 도시철도 데이터 준비 중입니다.
-            </p>
-          </div>
-          <div id="region-gwangju" class="region-tab-content">
-            <p class="info-text" style="text-align: center; padding: 40px 0">
-              광주 도시철도 데이터 준비 중입니다.
             </p>
           </div>
         </div>
@@ -493,7 +381,6 @@
         <h3 style="margin-top: 0; margin-bottom: 16px; color: #111">
           📦 백업 및 복원
         </h3>
-
         <div class="tab-menu">
           <button class="tab-link active" onclick="switchTab('exportTab')">
             📤 내보내기(백업)
@@ -502,18 +389,13 @@
             📥 불러오기(복원)
           </button>
         </div>
-
         <div id="exportTab" class="tab-content active">
-          <p class="info-text">
-            아래 생성된 백업 코드를 복사하여 메모장이나 카카오톡 등에
-            보관하세요.
-          </p>
+          <p class="info-text">아래 생성된 백업 코드를 복사하여 보관하세요.</p>
           <textarea id="exportText" class="backup-area" readonly></textarea>
           <button class="btn btn-primary" onclick="copyBackupCode()">
             📋 백업 코드 복사하기
           </button>
         </div>
-
         <div id="importTab" class="tab-content">
           <p class="info-text">
             이전에 보관해 둔 백업 코드를 아래에 붙여넣고 적용 버튼을 누르세요.
@@ -530,7 +412,9 @@
       </div>
     </div>
 
+    <!-- 외부 스크립트 연결 -->
     <script src="stations.js"></script>
+    <script src="stations-db.js"></script>
     <script>
       const LINE_STYLES = {
         "1호선": { bg: "#0052A4", text: "1" },
@@ -542,77 +426,185 @@
         "7호선": { bg: "#747F00", text: "7" },
         "8호선": { bg: "#EA545D", text: "8" },
         "9호선": { bg: "#BDB092", text: "9" },
+        경의중앙선: { bg: "#77C4A3", text: "경의" },
         수인분당선: { bg: "#EA9811", text: "수인" },
         신분당선: { bg: "#D4003B", text: "신" },
-        경의중앙선: { bg: "#77C4A3", text: "경의" },
-        경춘선: { bg: "#178C72", text: "경춘" },
-        공항철도: { bg: "#0090D2", text: "공항" },
       };
 
-      function getStorageKeyByLine(lineName) {
-        const lineNum = lineName.replace(/[^0-9]/g, "");
-        if (lineNum) return `line${lineNum}_verified_stations`;
-        return `line_${lineName}_verified_stations`;
+      // 노선 명칭 정규화 함수 (1호선, 2호선, 3호선 등 모든 호선 및 지선을 표준 노선명으로 정규화)
+      function parseSingleLineName(raw) {
+        if (!raw) return "";
+        let name = raw.trim().replace(/^서울\s*|지하철\s*/g, "");
+
+        if (
+          name.includes("1호선") ||
+          name.includes("경인선") ||
+          name.includes("경부선") ||
+          name.includes("병점지선")
+        ) {
+          return "1호선";
+        }
+
+        if (
+          name.includes("2호선") ||
+          name.includes("성수지선") ||
+          name.includes("신정지선")
+        ) {
+          return "2호선";
+        }
+
+        if (name.includes("3호선") || name.includes("일산선")) {
+          return "3호선";
+        }
+
+        if (/^\d+$/.test(name)) name += "호선";
+        return name;
+      }
+
+      // 개별 노선 페이지(line1.html, line2.html, line3.html 등)의 storageKey 규칙인 lineN_verified_stations 매핑
+      function getStorageKeyByLineName(lineName) {
+        const num = lineName.replace(/[^0-9]/g, "");
+        return num
+          ? `line${num}_verified_stations`
+          : `line_${lineName.replace(/\s+/g, "_")}_verified_stations`;
+      }
+
+      function ensureStationMaster() {
+        if (typeof stationMaster === "undefined" || !stationMaster) {
+          window.stationMaster = {};
+        }
+
+        if (window.DEFAULT_STATION_DB) {
+          Object.keys(window.DEFAULT_STATION_DB).forEach((rawLineName) => {
+            const lineName = parseSingleLineName(rawLineName);
+            const stationList = window.DEFAULT_STATION_DB[rawLineName];
+            stationList.forEach((stName, idx) => {
+              const customId = `db_${lineName}_${stName}_${idx + 1}`;
+              const exists = Object.values(stationMaster).some(
+                (s) =>
+                  s.name === stName && getLinesFromStation(s).includes(lineName)
+              );
+
+              if (!exists) {
+                stationMaster[customId] = {
+                  id: customId,
+                  name: stName,
+                  line: lineName,
+                };
+              }
+            });
+          });
+        }
+      }
+
+      function getLinesFromStation(station) {
+        if (!station) return [];
+        let lines = [];
+        if (station.line) {
+          station.line.split("/").forEach((rl) => {
+            const norm = parseSingleLineName(rl);
+            if (norm && !lines.includes(norm)) lines.push(norm);
+          });
+        }
+        return lines;
       }
 
       function getLineStyle(lineName) {
-        if (LINE_STYLES[lineName]) return LINE_STYLES[lineName];
-        const num = lineName.replace(/[^0-9]/g, "");
-        return {
-          bg: "#64748b",
-          text: num || lineName.slice(0, 2),
-        };
-      }
-
-      function getLineStationIds(lineName) {
-        const lineNum = lineName.replace(/[^0-9]/g, "");
-        const routeKey = lineNum ? `line${lineNum}` : null;
-
-        if (
-          typeof lineRoutes !== "undefined" &&
-          routeKey &&
-          lineRoutes[routeKey]
-        ) {
-          return [...new Set(Object.values(lineRoutes[routeKey]).flat())];
-        }
-
-        return Object.keys(stationMaster).filter(
-          (id) => stationMaster[id] && stationMaster[id].line === lineName
+        return (
+          LINE_STYLES[lineName] || { bg: "#475569", text: lineName.slice(0, 2) }
         );
       }
 
+      async function initMyPage() {
+        if (typeof loadStationsFromGoogleSheet === "function") {
+          try {
+            await loadStationsFromGoogleSheet();
+          } catch (e) {}
+        }
+        ensureStationMaster();
+        renderProgressSummary();
+      }
+
+      window.addEventListener("DOMContentLoaded", initMyPage);
+
       function renderProgressSummary() {
+        ensureStationMaster();
         const gridContainer = document.getElementById("lineSummaryGrid");
         gridContainer.innerHTML = "";
 
-        if (typeof stationMaster === "undefined") return;
+        const lineGroups = {};
+        const allUniqueNames = new Set();
 
-        const allLines = [
-          ...new Set(Object.values(stationMaster).map((s) => s.line)),
-        ];
+        Object.keys(stationMaster).forEach((id) => {
+          const station = stationMaster[id];
+          if (!station || !station.name) return;
 
-        let totalStationsAll = 0;
+          const stName = station.name.trim();
+          allUniqueNames.add(stName);
+
+          getLinesFromStation(station).forEach((normLine) => {
+            if (!lineGroups[normLine]) lineGroups[normLine] = new Map();
+            if (!lineGroups[normLine].has(stName)) {
+              lineGroups[normLine].set(stName, []);
+            }
+            lineGroups[normLine].get(stName).push(id);
+          });
+        });
+
+        const sortedLines = Object.keys(lineGroups).sort((a, b) => {
+          const numA = parseInt(a.replace(/[^0-9]/g, ""));
+          const numB = parseInt(b.replace(/[^0-9]/g, ""));
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          return a.localeCompare(b, "ko");
+        });
+
         let totalVerifiedAll = 0;
+        const combinedBackupData = {};
 
-        allLines.forEach((lineName) => {
-          const lineStationIds = getLineStationIds(lineName);
-          const lineTotal = lineStationIds.length;
+        allUniqueNames.forEach((stName) => {
+          const relatedStations = Object.values(stationMaster).filter(
+            (s) => s && s.name && s.name.trim() === stName
+          );
 
-          const storageKey = getStorageKeyByLine(lineName);
+          let isVerified = false;
+          relatedStations.forEach((station) => {
+            getLinesFromStation(station).forEach((normLine) => {
+              const storageKey = getStorageKeyByLineName(normLine);
+              const savedData = JSON.parse(
+                localStorage.getItem(storageKey) || "{}"
+              );
+              if (savedData[station.id] || savedData[stName]) {
+                isVerified = true;
+                combinedBackupData[station.id] = true;
+              }
+            });
+          });
+
+          if (isVerified) totalVerifiedAll++;
+        });
+
+        sortedLines.forEach((lineName) => {
+          const stationMap = lineGroups[lineName];
+          const totalLineStations = stationMap.size;
+          if (totalLineStations === 0) return;
+
+          const storageKey = getStorageKeyByLineName(lineName);
           const savedData = JSON.parse(
             localStorage.getItem(storageKey) || "{}"
           );
 
-          const lineVerified = lineStationIds.filter(
-            (id) => savedData[id]
-          ).length;
+          let lineVerifiedCount = 0;
+          stationMap.forEach((ids, stName) => {
+            const isVerified =
+              savedData[stName] || ids.some((id) => savedData[id]);
+            if (isVerified) {
+              lineVerifiedCount++;
+            }
+          });
 
-          const linePercent =
-            lineTotal > 0 ? Math.round((lineVerified / lineTotal) * 100) : 0;
-
-          totalStationsAll += lineTotal;
-          totalVerifiedAll += lineVerified;
-
+          const linePercent = Math.round(
+            (lineVerifiedCount / totalLineStations) * 100
+          );
           const style = getLineStyle(lineName);
 
           const card = document.createElement("div");
@@ -622,7 +614,7 @@
             <div class="line-info-box">
               <div class="line-info-top">
                 <span class="line-name">${lineName}</span>
-                <span class="line-count-percent">${lineVerified}/${lineTotal}역 (${linePercent}%)</span>
+                <span class="line-count-percent">${lineVerifiedCount}/${totalLineStations}역 (${linePercent}%)</span>
               </div>
               <div class="line-progress-bg">
                 <div class="line-progress-fill" style="width: ${linePercent}%; background-color: ${style.bg};"></div>
@@ -633,12 +625,11 @@
         });
 
         const overallPercent =
-          totalStationsAll > 0
-            ? Math.round((totalVerifiedAll / totalStationsAll) * 100)
+          allUniqueNames.size > 0
+            ? Math.round((totalVerifiedAll / allUniqueNames.size) * 100)
             : 0;
-
         document.getElementById("totalStationCount").innerText =
-          totalStationsAll;
+          allUniqueNames.size;
         document.getElementById("totalVerifiedCount").innerText =
           totalVerifiedAll;
         document.getElementById(
@@ -647,146 +638,78 @@
         document.getElementById(
           "totalProgressFill"
         ).style.width = `${overallPercent}%`;
-
-        document.getElementById("exportText").value = JSON.stringify(
-          getAllSavedDataForBackup(allLines)
-        );
+        document.getElementById("exportText").value =
+          JSON.stringify(combinedBackupData);
       }
 
-      function getAllSavedDataForBackup(lines) {
-        let combined = {};
-        lines.forEach((line) => {
-          const key = getStorageKeyByLine(line);
-          const data = JSON.parse(localStorage.getItem(key) || "{}");
-          Object.assign(combined, data);
-        });
-        return combined;
-      }
-
-      /* 호선별 달성률 모달 및 지역 탭 관련 제어 */
       function openLineModal() {
         document.getElementById("lineModal").classList.add("show");
       }
-
       function closeLineModal() {
         document.getElementById("lineModal").classList.remove("show");
       }
-
-      function switchRegionTab(regionCode) {
-        const contents = document.querySelectorAll(".region-tab-content");
-        const tabLinks = document
-          .getElementById("regionTabMenu")
-          .querySelectorAll(".tab-link");
-
-        contents.forEach((c) => c.classList.remove("active"));
-        tabLinks.forEach((l) => l.classList.remove("active"));
-
-        document.getElementById(`region-${regionCode}`).classList.add("active");
-        event.target.classList.add("active");
-      }
-
-      /* 백업 모달 제어 */
       function openBackupModal() {
         document.getElementById("backupModal").classList.add("show");
       }
-
       function closeBackupModal() {
         document.getElementById("backupModal").classList.remove("show");
       }
-
-      window.addEventListener("click", (e) => {
-        const lineModal = document.getElementById("lineModal");
-        const backupModal = document.getElementById("backupModal");
-        if (e.target === lineModal) closeLineModal();
-        if (e.target === backupModal) closeBackupModal();
-      });
-
+      function switchRegionTab(code) {
+        document
+          .querySelectorAll(".region-tab-content")
+          .forEach((c) => c.classList.remove("active"));
+        document
+          .querySelectorAll("#regionTabMenu .tab-link")
+          .forEach((l) => l.classList.remove("active"));
+        document.getElementById(`region-${code}`).classList.add("active");
+        event.target.classList.add("active");
+      }
       function switchTab(tabId) {
-        const tabs = document.querySelectorAll("#backupModal .tab-content");
-        const tabLinks = document.querySelectorAll("#backupModal .tab-link");
-
-        tabs.forEach((tab) => tab.classList.remove("active"));
-        tabLinks.forEach((link) => link.classList.remove("active"));
-
+        document
+          .querySelectorAll("#backupModal .tab-content")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll("#backupModal .tab-link")
+          .forEach((l) => l.classList.remove("active"));
         document.getElementById(tabId).classList.add("active");
-
-        if (tabId === "exportTab") {
-          tabLinks[0].classList.add("active");
-        } else {
-          tabLinks[1].classList.add("active");
-        }
+        event.target.classList.add("active");
       }
-
       function copyBackupCode() {
-        const exportText = document.getElementById("exportText");
-        exportText.select();
+        const el = document.getElementById("exportText");
+        el.select();
         navigator.clipboard
-          .writeText(exportText.value)
-          .then(() => {
-            alert(
-              "백업 코드가 클립보드에 복사되었습니다!\n메모장이나 안전한 곳에 보관해 주세요."
-            );
-          })
-          .catch(() => {
-            alert("텍스트 상자의 코드를 드래그해서 직접 복사해 주세요.");
-          });
+          .writeText(el.value)
+          .then(() => alert("복사되었습니다!"));
       }
-
       function applyBackupCode() {
-        const importVal = document.getElementById("importText").value.trim();
-        if (!importVal) {
-          alert("복구할 백업 코드를 입력해주세요.");
-          return;
-        }
-
         try {
-          const parsed = JSON.parse(importVal);
-          const lineDataGroup = {};
-
-          Object.keys(parsed).forEach((stationId) => {
-            if (parsed[stationId] && stationMaster[stationId]) {
-              const line = stationMaster[stationId].line;
-              const storageKey = getStorageKeyByLine(line);
-
-              if (!lineDataGroup[storageKey]) {
-                lineDataGroup[storageKey] = {};
-              }
-              lineDataGroup[storageKey][stationId] = true;
+          const parsed = JSON.parse(
+            document.getElementById("importText").value.trim()
+          );
+          Object.keys(parsed).forEach((id) => {
+            if (parsed[id] && stationMaster[id]) {
+              getLinesFromStation(stationMaster[id]).forEach((line) => {
+                const key = getStorageKeyByLineName(line);
+                const saved = JSON.parse(localStorage.getItem(key) || "{}");
+                saved[id] = true;
+                localStorage.setItem(key, JSON.stringify(saved));
+              });
             }
           });
-
-          Object.keys(lineDataGroup).forEach((key) => {
-            localStorage.setItem(key, JSON.stringify(lineDataGroup[key]));
-          });
-
           renderProgressSummary();
-          document.getElementById("importText").value = "";
           closeBackupModal();
-          alert("🎉 방문 인증 데이터가 성공적으로 복구되었습니다!");
+          alert("복구 완료!");
         } catch (e) {
-          alert("올바르지 않은 백업 코드 형식입니다. 다시 확인해 주세요.");
+          alert("올바르지 않은 코드입니다.");
         }
       }
-
       function resetData() {
-        if (
-          confirm(
-            "정말로 모든 방문 기록을 삭제하시겠습니까?\n삭제된 기록은 복원할 수 없습니다."
-          )
-        ) {
-          const allLines = [
-            ...new Set(Object.values(stationMaster).map((s) => s.line)),
-          ];
-          allLines.forEach((line) => {
-            localStorage.removeItem(getStorageKeyByLine(line));
-          });
-
+        if (confirm("모든 기록을 삭제하시겠습니까?")) {
+          localStorage.clear();
           renderProgressSummary();
-          alert("모든 방문 기록이 초기화되었습니다.");
+          alert("초기화 완료");
         }
       }
-
-      renderProgressSummary();
     </script>
   </body>
 </html>

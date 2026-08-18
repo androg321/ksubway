@@ -4,7 +4,30 @@ let isAdminMode = false;
 
 const container = document.getElementById("stationList");
 const modalOverlay = document.getElementById("stationModal");
-const routes = LINE_CONFIG.routesData;
+
+// 등록된 모든 노선의 스토리지 키 목록 (전체 노선 방문 상태 동기화용)
+const ALL_LINE_STORAGE_KEYS = [
+  "line1_verified_stations",
+  "line2_verified_stations",
+  "line3_verified_stations",
+  "line4_verified_stations",
+  "line5_verified_stations",
+  "line6_verified_stations",
+  "line7_verified_stations",
+  "line8_verified_stations",
+  "line9_verified_stations",
+];
+
+/**
+ * 현재 노선 계통 데이터를 동적으로 가져오는 헬퍼 함수
+ * (구글 시트에서 로드된 lineRoutes가 우선 반영됨)
+ */
+function getRoutes() {
+  if (typeof lineRoutes !== "undefined" && lineRoutes[LINE_CONFIG.id]) {
+    return lineRoutes[LINE_CONFIG.id];
+  }
+  return LINE_CONFIG.routesData || {};
+}
 
 /**
  * 앱 초기화 (비동기로 구글 시트 데이터를 불러온 후 UI 및 화면 구성)
@@ -16,7 +39,17 @@ async function initApp() {
       await loadStationsFromGoogleSheet();
     }
 
-    // 2. 설정된 객체(LINE_CONFIG)를 바탕으로 기본 UI 요소 구성
+    // 디버깅용 로그
+    console.log("현재 설정된 LINE_CONFIG.id:", LINE_CONFIG.id);
+    console.log("불러온 lineRoutes 목록:", lineRoutes);
+    console.log("매칭된 계통 데이터:", lineRoutes[LINE_CONFIG.id]);
+
+    // 2. 구글 시트에서 로드된 lineRoutes가 존재하면 LINE_CONFIG.routesData 갱신
+    if (typeof lineRoutes !== "undefined" && lineRoutes[LINE_CONFIG.id]) {
+      LINE_CONFIG.routesData = lineRoutes[LINE_CONFIG.id];
+    }
+
+    // 3. 설정된 객체(LINE_CONFIG)를 바탕으로 기본 UI 요소 구성
     document.title = `서울 ${LINE_CONFIG.name} 모바일 인증`;
     document.documentElement.style.setProperty(
       "--line-color",
@@ -42,10 +75,10 @@ async function initApp() {
 
     currentRoute = LINE_CONFIG.tabs[0].id;
 
-    // 3. 기존 방문 기록(localStorage) 불러오기 및 스태이터스 업데이트
+    // 4. 기존 방문 기록(localStorage) 불러오기 및 스태이터스 업데이트
     loadProgress();
 
-    // 4. 역 목록 화면 렌더링
+    // 5. 역 목록 화면 렌더링
     renderStations();
 
     console.log("앱 초기화 완료");
@@ -77,7 +110,8 @@ function loadProgress() {
 
 function saveProgress() {
   const verifiedData = {};
-  const allStationIds = [...new Set(Object.values(routes).flat())];
+  const currentRoutes = getRoutes();
+  const allStationIds = [...new Set(Object.values(currentRoutes).flat())];
   allStationIds.forEach((id) => {
     if (stationMaster[id]) {
       verifiedData[id] = stationMaster[id].verified;
@@ -87,7 +121,8 @@ function saveProgress() {
 }
 
 function updateStats() {
-  const allStationIds = [...new Set(Object.values(routes).flat())];
+  const currentRoutes = getRoutes();
+  const allStationIds = [...new Set(Object.values(currentRoutes).flat())];
   const totalStations = allStationIds.length;
   const verifiedStations = allStationIds.filter(
     (id) => stationMaster[id] && stationMaster[id].verified
@@ -131,7 +166,8 @@ function switchRoute(routeKey) {
 
 function renderStations() {
   container.innerHTML = "";
-  const currentStationIds = routes[currentRoute];
+  const currentRoutes = getRoutes();
+  const currentStationIds = currentRoutes[currentRoute] || [];
 
   currentStationIds.forEach((id) => {
     const station = stationMaster[id];
@@ -230,14 +266,39 @@ function calcDistance() {
   );
 }
 
+/**
+ * 방문 인증 완료 처리 (환승역 타 노선 자동 연동 처리)
+ */
 function verifyStation() {
-  stationMaster[selectedStationId].verified = true;
+  const targetId = selectedStationId;
+  const targetStation = stationMaster[targetId];
+
+  if (!targetStation) return;
+
+  // 1. 현재 메모리 상의 역 상태 변경 및 현재 노선 스토리지 저장
+  targetStation.verified = true;
   saveProgress();
+
+  // 2. 다른 모든 노선의 LocalStorage를 탐색하여 동일 역 ID(예: cityhall) 방문 인증 상태 연동
+  ALL_LINE_STORAGE_KEYS.forEach((storageKey) => {
+    try {
+      const savedData = localStorage.getItem(storageKey);
+      const parsedData = savedData ? JSON.parse(savedData) : {};
+
+      parsedData[targetId] = true;
+      localStorage.setItem(storageKey, JSON.stringify(parsedData));
+    } catch (e) {
+      console.error(`${storageKey} 연동 저장 실패:`, e);
+    }
+  });
+
+  // 3. UI 갱신 및 모달 닫기
   renderStations();
   closeModal();
+
   setTimeout(() => {
     alert(
-      `🎉 ${stationMaster[selectedStationId].name} 방문 인증이 완료되었습니다!`
+      `🎉 ${targetStation.name} 방문 인증이 완료되었습니다!\n(환승 노선에도 자동 연동 처리되었습니다.)`
     );
   }, 300);
 }
