@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>지하철 역 인증기</title>
+    <!-- 세련된 폰트(Pretendard) 적용 -->
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+
+    <style>
+      :root {
+        /* 서울 지하철 메인 색상 */
+        --line1: #0052a4;
+        --line2: #00a84d;
+        --line3: #ef7c1c;
+        --line4: #00a5de;
+        --line5: #996cac;
+        --line6: #cd7c2f;
+        --line7: #747f00;
+        --line8: #e6186c;
+        --line9: #bdb092;
+
+        /* UI 색상 */
+        --bg-color: #f9fafb;
+        --card-bg: #ffffff;
+        --text-main: #191f28;
+        --text-sub: #8b95a1;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "Pretendard", sans-serif;
+        background-color: #e5e8eb; /* PC 배경색 */
+        display: flex;
+        justify-content: center;
+      }
+
+      /* 모바일 앱 컨테이너 */
+      .app-container {
+        width: 100%;
+        max-width: 480px;
+        min-height: 100vh;
+        background-color: var(--bg-color);
+        position: relative;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 상단 헤더 */
+      .header {
+        padding: 40px 24px 20px;
+        background-color: var(--bg-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .header-title h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+      }
+
+      .header-title p {
+        font-size: 15px;
+        color: var(--text-sub);
+        font-weight: 500;
+      }
+
+      /* 우측 상단 심플 마이페이지 버튼 */
+      .mypage-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: transform 0.15s ease, background-color 0.15s ease;
+        flex-shrink: 0;
+        margin-left: 12px;
+      }
+
+      .mypage-btn:active {
+        transform: scale(0.92);
+        background-color: #f2f4f6;
+      }
+
+      .mypage-btn svg {
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+      }
+
+      /* 지역 선택 탭 (가로 스크롤) */
+      .region-tabs {
+        display: flex;
+        gap: 8px;
+        padding: 0 24px 20px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .region-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab {
+        padding: 10px 18px;
+        border-radius: 20px;
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        border: none;
+        background-color: var(--card-bg);
+        color: var(--text-sub);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        transition: all 0.2s;
+      }
+
+      .tab.active {
+        background-color: var(--text-main);
+        color: #ffffff;
+      }
+
+      /* 노선 마크 그리드 (한 줄에 4개 배치) */
+      .line-grid {
+        padding: 10px 24px 40px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px 16px;
+        place-items: center;
+      }
+
+      /* 입체적인 3D 지하철 마크 버튼 */
+      .line-mark {
+        width: 100%;
+        max-width: 68px;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        color: #ffffff;
+        font-size: 26px;
+        font-weight: 800;
+
+        /* 3D 볼록 효과를 위한 그라데이션 및 다중 그림자 */
+        background-image: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(0, 0, 0, 0.15) 100%
+        );
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15),
+          inset 0 3px 4px rgba(255, 255, 255, 0.5),
+          inset 0 -4px 6px rgba(0, 0, 0, 0.25);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      /* 모바일 터치 시 실제 버튼처럼 눌리는 3D 동작 효과 */
+      .line-mark:active {
+        transform: translateY(3px) scale(0.95);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12),
+          inset 0 1px 2px rgba(255, 255, 255, 0.3),
+          inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      /* 호선별 배경색 */
+      .line-1 {
+        background-color: var(--line1);
+      }
+      .line-2 {
+        background-color: var(--line2);
+      }
+      .line-3 {
+        background-color: var(--line3);
+      }
+      .line-4 {
+        background-color: var(--line4);
+      }
+      .line-5 {
+        background-color: var(--line5);
+      }
+      .line-6 {
+        background-color: var(--line6);
+      }
+      .line-7 {
+        background-color: var(--line7);
+      }
+      .line-8 {
+        background-color: var(--line8);
+      }
+      .line-9 {
+        background-color: var(--line9);
+      }
+
+      /* 글자 노선용 폰트 스타일 */
+      .text-sm {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.1;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- 상단 헤더 (타이틀 + 마이페이지 버튼) -->
+      <header class="header">
+        <div class="header-title">
+          <h1>어디에 계신가요?</h1>
+          <p>인증할 지하철 노선을 선택해주세요.</p>
+        </div>
+        <a href="mypage.html" class="mypage-btn" aria-label="마이페이지">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+            />
+          </svg>
+        </a>
+      </header>
+
+      <!-- 지역 선택 탭 -->
+      <div class="region-tabs">
+        <button class="tab active">수도권</button>
+        <button class="tab">부산</button>
+        <button class="tab">대구</button>
+        <button class="tab">광주</button>
+        <button class="tab">대전</button>
+      </div>
+
+      <!-- 노선 마크 그리드 영역 -->
+      <main class="line-grid">
+        <a href="line1.html" class="line-mark line-1">1</a>
+        <a href="line2.html" class="line-mark line-2">2</a>
+        <a href="line3.html" class="line-mark line-3">3</a>
+        <a href="line4.html" class="line-mark line-4">4</a>
+        <a href="line5.html" class="line-mark line-5">5</a>
+        <a href="line6.html" class="line-mark line-6">6</a>
+        <a href="line7.html" class="line-mark line-7">7</a>
+        <a href="line8.html" class="line-mark line-8">8</a>
+        <a href="line9.html" class="line-mark line-9">9</a>
+      </main>
+    </div>
+  </body>
+</html>
