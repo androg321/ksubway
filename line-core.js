@@ -6,32 +6,58 @@ const container = document.getElementById("stationList");
 const modalOverlay = document.getElementById("stationModal");
 const routes = LINE_CONFIG.routesData;
 
-// 초기화: 설정된 객체(LINE_CONFIG)를 바탕으로 돔 요소 구성
-function initApp() {
-  document.title = `서울 ${LINE_CONFIG.name} 모바일 인증`;
-  document.documentElement.style.setProperty("--line-color", LINE_CONFIG.color);
-  document.getElementById(
-    "headerTitle"
-  ).innerText = `🚇 ${LINE_CONFIG.name} 인증기`;
-  document.getElementById(
-    "progressTitle"
-  ).innerText = `${LINE_CONFIG.name} 인증 진행도: `;
+/**
+ * 앱 초기화 (비동기로 구글 시트 데이터를 불러온 후 UI 및 화면 구성)
+ */
+async function initApp() {
+  try {
+    // 1. 구글 시트 데이터 불러오기 완료 시까지 대기
+    if (typeof loadStationsFromGoogleSheet === "function") {
+      await loadStationsFromGoogleSheet();
+    }
 
-  const tabContainer = document.getElementById("tabContainer");
-  tabContainer.innerHTML = "";
+    // 2. 설정된 객체(LINE_CONFIG)를 바탕으로 기본 UI 요소 구성
+    document.title = `서울 ${LINE_CONFIG.name} 모바일 인증`;
+    document.documentElement.style.setProperty(
+      "--line-color",
+      LINE_CONFIG.color
+    );
+    document.getElementById(
+      "headerTitle"
+    ).innerText = `🚇 ${LINE_CONFIG.name} 인증기`;
+    document.getElementById(
+      "progressTitle"
+    ).innerText = `${LINE_CONFIG.name} 인증 진행도: `;
 
-  LINE_CONFIG.tabs.forEach((tab, index) => {
-    const btn = document.createElement("button");
-    btn.className = `tab-btn ${index === 0 ? "active" : ""}`;
-    btn.innerText = tab.name;
-    btn.onclick = () => switchRoute(tab.id);
-    tabContainer.appendChild(btn);
-  });
+    const tabContainer = document.getElementById("tabContainer");
+    tabContainer.innerHTML = "";
 
-  currentRoute = LINE_CONFIG.tabs[0].id;
-  loadProgress();
-  renderStations();
+    LINE_CONFIG.tabs.forEach((tab, index) => {
+      const btn = document.createElement("button");
+      btn.className = `tab-btn ${index === 0 ? "active" : ""}`;
+      btn.innerText = tab.name;
+      btn.onclick = () => switchRoute(tab.id);
+      tabContainer.appendChild(btn);
+    });
+
+    currentRoute = LINE_CONFIG.tabs[0].id;
+
+    // 3. 기존 방문 기록(localStorage) 불러오기 및 스태이터스 업데이트
+    loadProgress();
+
+    // 4. 역 목록 화면 렌더링
+    renderStations();
+
+    console.log("앱 초기화 완료");
+  } catch (err) {
+    console.error("앱 초기화 중 오류 발생:", err);
+  }
 }
+
+// 문서 로드 완료 시 initApp 실행
+window.addEventListener("DOMContentLoaded", () => {
+  initApp();
+});
 
 function loadProgress() {
   const savedData = localStorage.getItem(LINE_CONFIG.storageKey);
@@ -109,6 +135,9 @@ function renderStations() {
 
   currentStationIds.forEach((id) => {
     const station = stationMaster[id];
+    // 구글 시트에 존재하지 않는 id일 경우 예외 처리
+    if (!station) return;
+
     const btn = document.createElement("button");
     btn.className = `station-btn`;
 
@@ -119,7 +148,11 @@ function renderStations() {
       </div>
       <div class="text-col">
           <span class="station-name">${station.name}</span>
-          ${getTransferBadgesHtml(station, LINE_CONFIG.id)}
+          ${
+            typeof getTransferBadgesHtml === "function"
+              ? getTransferBadgesHtml(station, LINE_CONFIG.id)
+              : ""
+          }
       </div>
       ${station.verified ? `<div class="visited-badge">✓ 방문함</div>` : ""}
     `;
@@ -221,6 +254,3 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
       Math.sin(dLon / 2);
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-
-// 스크립트가 로드되면 앱 초기화 실행
-window.onload = initApp;
