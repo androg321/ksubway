@@ -159,12 +159,13 @@
 
       /* 노선 카드 그리드 */
       .line-grid {
-        padding: 8px 20px 80px;
+        padding: 8px 20px 24px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 14px 12px;
-        flex: 1;
-        overflow: hidden;
+        gap: 12px;
+        align-content: start;
+        /* flex: 1; */
+        overflow-y: auto;
       }
 
       /* 호선 카드 버튼 */
