@@ -7,6 +7,8 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>서울 1호선 계통별 모바일 인증</title>
+    <!-- 외부 공통 환승 배지 스타일시트 -->
+    <link rel="stylesheet" href="transfer-badges.css" />
     <style>
       * {
         box-sizing: border-box;
@@ -180,7 +182,7 @@
         cursor: pointer;
         font-weight: 600;
         font-size: 1.05rem;
-        padding: 0;
+        padding: 0 16px 0 0;
         transition: background-color 0.2s;
         color: #333;
         flex-shrink: 0;
@@ -197,6 +199,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-shrink: 0;
       }
       .icon-line {
         position: absolute;
@@ -223,20 +226,32 @@
         z-index: 2;
       }
 
+      /* 역 이름 및 환승 노선 배지 영역 */
       .text-col {
         flex: 1;
         text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow: hidden;
+      }
+
+      .station-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        white-space: nowrap;
       }
 
       .visited-badge {
-        margin-right: 20px;
+        margin-left: auto;
         background-color: #f0fdf4;
         color: #16a34a;
         border: 1px solid #bbf7d0;
-        padding: 5px 10px;
+        padding: 4px 8px;
         border-radius: 20px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 700;
+        flex-shrink: 0;
       }
 
       /* 하단 고정 통계 바 */
@@ -497,6 +512,8 @@
     </div>
 
     <script src="stations.js"></script>
+    <!-- 외부 공통 환승 배지 생성 스크립트 -->
+    <script src="transfer-badges.js"></script>
     <script>
       const routes = lineRoutes["line1"];
 
@@ -601,7 +618,8 @@
                         <div class="icon-circle"></div>
                     </div>
                     <div class="text-col">
-                        ${station.name}
+                        <span class="station-name">${station.name}</span>
+                        ${getTransferBadgesHtml(station, "1")}
                     </div>
                     ${
                       station.verified

@@ -1,0 +1,55 @@
+/* 환승 배지 전체 컨테이너 */
+.transfer-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* 기본 원형 환승 노선 배지 (1자리 숫자 전용) */
+.transfer-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* 2글자 이상 노선명(경춘, 공항철도 등) 가로 확장 배지 */
+.transfer-badge.pill {
+  width: auto;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  height: 18px;
+  white-space: nowrap;
+}
+
+/* KTX 전용 이미지 배지 (가로 비율 자동 유지) */
+.transfer-badge.ktx-badge {
+  background-color: #ffffff;
+  border: 1px solid #003b82;
+  color: #003b82;
+  width: auto;
+  height: 18px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.transfer-badge.ktx-badge img {
+  height: 12px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
