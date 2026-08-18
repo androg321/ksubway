@@ -1,0 +1,226 @@
+let currentRoute = null;
+let selectedStationId = null;
+let isAdminMode = false;
+
+const container = document.getElementById("stationList");
+const modalOverlay = document.getElementById("stationModal");
+const routes = LINE_CONFIG.routesData;
+
+// 초기화: 설정된 객체(LINE_CONFIG)를 바탕으로 돔 요소 구성
+function initApp() {
+  document.title = `서울 ${LINE_CONFIG.name} 모바일 인증`;
+  document.documentElement.style.setProperty("--line-color", LINE_CONFIG.color);
+  document.getElementById(
+    "headerTitle"
+  ).innerText = `🚇 ${LINE_CONFIG.name} 인증기`;
+  document.getElementById(
+    "progressTitle"
+  ).innerText = `${LINE_CONFIG.name} 인증 진행도: `;
+
+  const tabContainer = document.getElementById("tabContainer");
+  tabContainer.innerHTML = "";
+
+  LINE_CONFIG.tabs.forEach((tab, index) => {
+    const btn = document.createElement("button");
+    btn.className = `tab-btn ${index === 0 ? "active" : ""}`;
+    btn.innerText = tab.name;
+    btn.onclick = () => switchRoute(tab.id);
+    tabContainer.appendChild(btn);
+  });
+
+  currentRoute = LINE_CONFIG.tabs[0].id;
+  loadProgress();
+  renderStations();
+}
+
+function loadProgress() {
+  const savedData = localStorage.getItem(LINE_CONFIG.storageKey);
+  if (savedData) {
+    try {
+      const parsedData = JSON.parse(savedData);
+      Object.keys(parsedData).forEach((id) => {
+        if (stationMaster[id]) {
+          stationMaster[id].verified = parsedData[id];
+        }
+      });
+    } catch (e) {
+      console.error("데이터 불러오기 실패", e);
+    }
+  }
+}
+
+function saveProgress() {
+  const verifiedData = {};
+  const allStationIds = [...new Set(Object.values(routes).flat())];
+  allStationIds.forEach((id) => {
+    if (stationMaster[id]) {
+      verifiedData[id] = stationMaster[id].verified;
+    }
+  });
+  localStorage.setItem(LINE_CONFIG.storageKey, JSON.stringify(verifiedData));
+}
+
+function updateStats() {
+  const allStationIds = [...new Set(Object.values(routes).flat())];
+  const totalStations = allStationIds.length;
+  const verifiedStations = allStationIds.filter(
+    (id) => stationMaster[id] && stationMaster[id].verified
+  ).length;
+
+  const percentage =
+    totalStations > 0
+      ? Math.round((verifiedStations / totalStations) * 100)
+      : 0;
+
+  document.getElementById("totalCount").innerText = totalStations;
+  document.getElementById("verifiedCount").innerText = verifiedStations;
+  document.getElementById("percentageText").innerText = `${percentage}%`;
+  document.getElementById("progressFill").style.width = `${percentage}%`;
+}
+
+function toggleAdminMode() {
+  isAdminMode = !isAdminMode;
+  const fab = document.getElementById("adminFab");
+  const banner = document.getElementById("adminBanner");
+
+  if (isAdminMode) {
+    fab.classList.add("active");
+    fab.innerHTML = "⚡ 관리자 ON";
+    banner.classList.add("show");
+  } else {
+    fab.classList.remove("active");
+    fab.innerHTML = "⚙️ 관리자 OFF";
+    banner.classList.remove("show");
+  }
+}
+
+function switchRoute(routeKey) {
+  currentRoute = routeKey;
+  const tabs = document.querySelectorAll(".tab-btn");
+  LINE_CONFIG.tabs.forEach((tab, index) => {
+    tabs[index].classList.toggle("active", tab.id === routeKey);
+  });
+  renderStations();
+}
+
+function renderStations() {
+  container.innerHTML = "";
+  const currentStationIds = routes[currentRoute];
+
+  currentStationIds.forEach((id) => {
+    const station = stationMaster[id];
+    const btn = document.createElement("button");
+    btn.className = `station-btn`;
+
+    btn.innerHTML = `
+      <div class="icon-col">
+          <div class="icon-line"></div>
+          <div class="icon-circle"></div>
+      </div>
+      <div class="text-col">
+          <span class="station-name">${station.name}</span>
+          ${getTransferBadgesHtml(station, LINE_CONFIG.id)}
+      </div>
+      ${station.verified ? `<div class="visited-badge">✓ 방문함</div>` : ""}
+    `;
+
+    btn.onclick = () => openModal(id);
+    container.appendChild(btn);
+  });
+  updateStats();
+}
+
+function openModal(id) {
+  selectedStationId = id;
+  const station = stationMaster[id];
+
+  if (station.verified) {
+    alert("이미 방문 인증이 완료된 역입니다.");
+    return;
+  }
+
+  document.getElementById("modalTitle").innerText = station.name;
+  const mapUrl = `https://maps.google.com/maps?q=${station.lat},${station.lng}&z=16&output=embed`;
+  document.getElementById("mapFrame").src = mapUrl;
+
+  const verifyBtn = document.getElementById("verifyBtn");
+  const calcBtn = document.getElementById("calcBtn");
+  const distanceResult = document.getElementById("distanceResult");
+
+  if (isAdminMode) {
+    distanceResult.innerText = "⚡ 관리자 모드: 위치 제한 없음";
+    calcBtn.style.display = "none";
+    verifyBtn.style.display = "block";
+  } else {
+    distanceResult.innerText = "버튼을 눌러 거리를 측정하세요.";
+    calcBtn.style.display = "block";
+    verifyBtn.style.display = "none";
+  }
+  modalOverlay.classList.add("show");
+}
+
+function closeModal() {
+  modalOverlay.classList.remove("show");
+}
+
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) closeModal();
+});
+
+function calcDistance() {
+  document.getElementById("distanceResult").innerText = "GPS 신호 탐색 중...";
+  const station = stationMaster[selectedStationId];
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const d = getDistanceFromLatLonInMeters(
+        pos.coords.latitude,
+        pos.coords.longitude,
+        station.lat,
+        station.lng
+      );
+      document.getElementById(
+        "distanceResult"
+      ).innerText = `현재 위치와의 거리: ${Math.round(d)}m`;
+
+      if (d <= 1000) {
+        document.getElementById("verifyBtn").style.display = "block";
+      } else {
+        document.getElementById("verifyBtn").style.display = "none";
+        alert("1km 이내에 접근해야 인증할 수 있습니다.");
+      }
+    },
+    () => {
+      document.getElementById("distanceResult").innerText = "위치 권한 오류";
+      alert("기기의 위치 권한을 허용해주세요.");
+    }
+  );
+}
+
+function verifyStation() {
+  stationMaster[selectedStationId].verified = true;
+  saveProgress();
+  renderStations();
+  closeModal();
+  setTimeout(() => {
+    alert(
+      `🎉 ${stationMaster[selectedStationId].name} 방문 인증이 완료되었습니다!`
+    );
+  }, 300);
+}
+
+function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// 스크립트가 로드되면 앱 초기화 실행
+window.onload = initApp;
