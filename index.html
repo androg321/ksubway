@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <title>지하철 역 인증기</title>
     <!-- 세련된 폰트(Pretendard) 적용 -->
@@ -17,17 +17,6 @@
 
     <style>
       :root {
-        /* 서울 지하철 메인 색상 */
-        --line1: #0052a4;
-        --line2: #00a84d;
-        --line3: #ef7c1c;
-        --line4: #00a5de;
-        --line5: #996cac;
-        --line6: #cd7c2f;
-        --line7: #747f00;
-        --line8: #e6186c;
-        --line9: #bdb092;
-
         /* UI 색상 */
         --bg-color: #f9fafb;
         --card-bg: #ffffff;
@@ -59,11 +48,13 @@
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
         display: flex;
         flex-direction: column;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
       }
 
       /* 상단 헤더 */
       .header {
-        padding: 40px 24px 20px;
+        padding: 28px 20px 16px;
         background-color: var(--bg-color);
         display: flex;
         justify-content: space-between;
@@ -71,23 +62,23 @@
       }
 
       .header-title h1 {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 700;
         color: var(--text-main);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         letter-spacing: -0.5px;
       }
 
       .header-title p {
-        font-size: 15px;
+        font-size: 14px;
         color: var(--text-sub);
         font-weight: 500;
       }
 
-      /* 우측 상단 심플 마이페이지 버튼 */
+      /* 우측 상단 마이페이지 버튼 */
       .mypage-btn {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         background-color: var(--card-bg);
         color: var(--text-main);
@@ -95,9 +86,9 @@
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        transition: transform 0.15s ease, background-color 0.15s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: transform 0.12s ease, background-color 0.12s ease;
         flex-shrink: 0;
         margin-left: 12px;
       }
@@ -113,31 +104,39 @@
         fill: currentColor;
       }
 
-      /* 지역 선택 탭 (가로 스크롤) */
+      /* 지역 선택 탭 */
       .region-tabs {
         display: flex;
         gap: 8px;
-        padding: 0 24px 20px;
+        padding: 4px 20px 16px;
         overflow-x: auto;
         scrollbar-width: none;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
       }
 
       .region-tabs::-webkit-scrollbar {
         display: none;
       }
 
+      .region-tabs.hidden {
+        display: none;
+      }
+
       .tab {
-        padding: 10px 18px;
+        height: 40px;
+        padding: 0 16px;
         border-radius: 20px;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
         white-space: nowrap;
         cursor: pointer;
         border: none;
         background-color: var(--card-bg);
         color: var(--text-sub);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-        transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
       }
 
       .tab.active {
@@ -145,95 +144,192 @@
         color: #ffffff;
       }
 
-      /* 노선 마크 그리드 (한 줄에 4개 배치) */
+      /* 노선 카드 그리드 */
       .line-grid {
-        padding: 10px 24px 40px;
+        padding: 8px 20px 80px;
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px 16px;
-        place-items: center;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 12px;
       }
 
-      /* 입체적인 3D 지하철 마크 버튼 */
-      .line-mark {
-        width: 100%;
-        max-width: 68px;
-        aspect-ratio: 1 / 1;
-        border-radius: 50%;
+      /* 호선 카드 버튼 */
+      .line-card {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        gap: 3px;
+        height: 62px;
+        border-radius: 18px;
         text-decoration: none;
         color: #ffffff;
-        font-size: 26px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.12s ease, opacity 0.12s ease;
+      }
+
+      .line-card:active {
+        transform: scale(0.95);
+        opacity: 0.85;
+      }
+
+      .line-num {
+        font-size: 22px;
         font-weight: 800;
-
-        /* 3D 볼록 효과를 위한 그라데이션 및 다중 그림자 */
-        background-image: linear-gradient(
-          145deg,
-          rgba(255, 255, 255, 0.3) 0%,
-          rgba(0, 0, 0, 0.15) 100%
-        );
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15),
-          inset 0 3px 4px rgba(255, 255, 255, 0.5),
-          inset 0 -4px 6px rgba(0, 0, 0, 0.25);
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        letter-spacing: -0.5px;
       }
 
-      /* 모바일 터치 시 실제 버튼처럼 눌리는 3D 동작 효과 */
-      .line-mark:active {
-        transform: translateY(3px) scale(0.95);
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12),
-          inset 0 1px 2px rgba(255, 255, 255, 0.3),
-          inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      .line-unit {
+        font-size: 14px;
+        font-weight: 600;
+        opacity: 0.92;
+        margin-top: 2px;
       }
 
-      /* 호선별 배경색 */
-      .line-1 {
-        background-color: var(--line1);
-      }
-      .line-2 {
-        background-color: var(--line2);
-      }
-      .line-3 {
-        background-color: var(--line3);
-      }
-      .line-4 {
-        background-color: var(--line4);
-      }
-      .line-5 {
-        background-color: var(--line5);
-      }
-      .line-6 {
-        background-color: var(--line6);
-      }
-      .line-7 {
-        background-color: var(--line7);
-      }
-      .line-8 {
-        background-color: var(--line8);
-      }
-      .line-9 {
-        background-color: var(--line9);
-      }
-
-      /* 글자 노선용 폰트 스타일 */
-      .text-sm {
+      /* 긴 글자 노선용 대응 */
+      .line-card.compact .line-num {
         font-size: 16px;
-        font-weight: 700;
-        line-height: 1.1;
+      }
+      .line-card.compact .line-unit {
+        font-size: 12px;
+      }
+
+      /* 데이터 없을 때 스타일 */
+      .empty-state {
+        grid-column: 1 / -1;
+        padding: 60px 0;
         text-align: center;
+        color: var(--text-sub);
+        font-size: 15px;
+      }
+
+      /* ----------------------------------
+         플로팅 액션 버튼 (FAB) & 메뉴 스타일
+         ---------------------------------- */
+      .fab-container {
+        position: fixed;
+        bottom: max(24px, env(safe-area-inset-bottom) + 16px);
+        right: calc(50% - 220px);
+        z-index: 1000;
+      }
+
+      @media (max-width: 480px) {
+        .fab-container {
+          right: 20px;
+        }
+      }
+
+      /* 플로팅 버튼 */
+      .fab-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 18px;
+        border-radius: 30px;
+        background-color: var(--text-main);
+        color: #ffffff;
+        border: none;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: inherit;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.15s ease, background-color 0.15s ease;
+      }
+
+      .fab-btn:active {
+        transform: scale(0.94);
+      }
+
+      .fab-btn svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+      }
+
+      /* 딤 어두운 배경 레어어 */
+      .fab-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(2px);
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+      }
+
+      .fab-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* 팝업 선택 메뉴 */
+      .fab-menu {
+        position: fixed;
+        bottom: max(80px, env(safe-area-inset-bottom) + 72px);
+        right: calc(50% - 220px);
+        width: 180px;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+        z-index: 1002;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(12px) scale(0.95);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      }
+
+      @media (max-width: 480px) {
+        .fab-menu {
+          right: 20px;
+        }
+      }
+
+      .fab-menu.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+      }
+
+      .fab-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 12px 14px;
+        border: none;
+        background: transparent;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-main);
+        cursor: pointer;
+        font-family: inherit;
+        text-align: left;
+        transition: background-color 0.15s ease;
+      }
+
+      .fab-menu-item:active {
+        background-color: #f2f4f6;
+      }
+
+      .fab-menu-item.active {
+        background-color: #e8f3ff;
+        color: #0052a4;
+        font-weight: 700;
       }
     </style>
   </head>
   <body>
     <div class="app-container">
-      <!-- 상단 헤더 (타이틀 + 마이페이지 버튼) -->
+      <!-- 상단 헤더 -->
       <header class="header">
         <div class="header-title">
-          <h1>어디에 계신가요?</h1>
-          <p>인증할 지하철 노선을 선택해주세요.</p>
+          <h1 id="headerTitle">어디에 계신가요?</h1>
+          <p id="headerSub">인증할 지하철 노선을 선택해주세요.</p>
         </div>
         <a href="mypage.html" class="mypage-btn" aria-label="마이페이지">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -244,27 +340,243 @@
         </a>
       </header>
 
-      <!-- 지역 선택 탭 -->
-      <div class="region-tabs">
-        <button class="tab active">수도권</button>
-        <button class="tab">부산</button>
-        <button class="tab">대구</button>
-        <button class="tab">광주</button>
-        <button class="tab">대전</button>
+      <!-- 지역 선택 탭 (지하철 선택 시에만 표시) -->
+      <div class="region-tabs" id="regionTabs">
+        <button class="tab active" data-region="수도권">수도권</button>
+        <button class="tab" data-region="부산">부산</button>
+        <button class="tab" data-region="대구">대구</button>
+        <button class="tab" data-region="광주">광주</button>
+        <button class="tab" data-region="대전">대전</button>
       </div>
 
-      <!-- 노선 마크 그리드 영역 -->
-      <main class="line-grid">
-        <a href="line1.html" class="line-mark line-1">1</a>
-        <a href="line2.html" class="line-mark line-2">2</a>
-        <a href="line3.html" class="line-mark line-3">3</a>
-        <a href="line4.html" class="line-mark line-4">4</a>
-        <a href="line5.html" class="line-mark line-5">5</a>
-        <a href="line6.html" class="line-mark line-6">6</a>
-        <a href="line7.html" class="line-mark line-7">7</a>
-        <a href="line8.html" class="line-mark line-8">8</a>
-        <a href="line9.html" class="line-mark line-9">9</a>
+      <!-- 노선 카드 그리드 영역 -->
+      <main class="line-grid" id="lineGrid">
+        <!-- 동적 생성 영역 -->
       </main>
+
+      <!-- 플로팅 액션 버튼 (FAB) -->
+      <div class="fab-container">
+        <button class="fab-btn" id="fabBtn">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2c-4 0-8 2.5-8 7v7c0 1.5 1 3 2.5 3.5L5 21v1h2l1.5-2h7l1.5 2h2v-1l-1.5-1.5C19 19 20 17.5 20 16V9c0-4.5-4-7-8-7zm-4.5 13c-.83 0-1.5-.67-1.5-1.5S6.67 12 7.5 12s1.5.67 1.5 1.5S8.33 15 7.5 15zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-5H6V8h12v2z"
+            />
+          </svg>
+          <span id="fabLabel">지하철</span>
+        </button>
+      </div>
+
+      <!-- FAB 선택 메뉴 & 어두운 배경 레이어 -->
+      <div class="fab-backdrop" id="fabBackdrop"></div>
+      <div class="fab-menu" id="fabMenu">
+        <button class="fab-menu-item active" data-type="subway">
+          🚇 지하철
+        </button>
+        <button class="fab-menu-item" data-type="highspeed">
+          🚅 고속철 (KTX/SRT)
+        </button>
+        <button class="fab-menu-item" data-type="trunk">🚆 간선철도</button>
+      </div>
     </div>
+
+    <script>
+      // 데이터 정의 (지하철, 고속철, 간선철도)
+      const railData = {
+        subway: {
+          수도권: [
+            { num: "1", unit: "호선", color: "#0052a4", link: "line1.html" },
+            { num: "2", unit: "호선", color: "#00a84d", link: "line2.html" },
+            { num: "3", unit: "호선", color: "#ef7c1c", link: "line3.html" },
+            { num: "4", unit: "호선", color: "#00a5de", link: "line4.html" },
+            { num: "5", unit: "호선", color: "#996cac", link: "line5.html" },
+            { num: "6", unit: "호선", color: "#cd7c2f", link: "line6.html" },
+            { num: "7", unit: "호선", color: "#747f00", link: "line7.html" },
+            { num: "8", unit: "호선", color: "#e6186c", link: "line8.html" },
+            { num: "9", unit: "호선", color: "#bdb092", link: "line9.html" },
+          ],
+          부산: [
+            { num: "1", unit: "호선", color: "#f26829", link: "busan1.html" },
+            { num: "2", unit: "호선", color: "#84c225", link: "busan2.html" },
+            { num: "3", unit: "호선", color: "#bb8c00", link: "busan3.html" },
+            { num: "4", unit: "호선", color: "#217dc1", link: "busan4.html" },
+            {
+              num: "동해",
+              unit: "선",
+              color: "#0054a6",
+              link: "busan-donghae.html",
+            },
+            {
+              num: "김해",
+              unit: "경전철",
+              color: "#8652a1",
+              link: "busan-gimhae.html",
+              compact: true,
+            },
+          ],
+          대구: [
+            { num: "1", unit: "호선", color: "#d93f20", link: "daegu1.html" },
+            { num: "2", unit: "호선", color: "#00aa4f", link: "daegu2.html" },
+            { num: "3", unit: "호선", color: "#ffb400", link: "daegu3.html" },
+          ],
+          광주: [
+            { num: "1", unit: "호선", color: "#00913a", link: "gwangju1.html" },
+          ],
+          대전: [
+            { num: "1", unit: "호선", color: "#00743b", link: "daejeon1.html" },
+          ],
+        },
+        highspeed: [
+          { num: "KTX", unit: "", color: "#003b82", link: "ktx.html" },
+          { num: "SRT", unit: "", color: "#5d1f3b", link: "srt.html" },
+          { num: "KTX", unit: "-이음", color: "#005a9c", link: "ktx-eum.html" },
+          {
+            num: "KTX",
+            unit: "-청룡",
+            color: "#002b5c",
+            link: "ktx-cheongryong.html",
+            compact: true,
+          },
+        ],
+        trunk: [
+          {
+            num: "ITX",
+            unit: "-새마을",
+            color: "#b9001b",
+            link: "itx-saemaeul.html",
+            compact: true,
+          },
+          {
+            num: "ITX",
+            unit: "-마음",
+            color: "#d11f26",
+            link: "itx-maum.html",
+            compact: true,
+          },
+          {
+            num: "ITX",
+            unit: "-청춘",
+            color: "#0066b3",
+            link: "itx-cheongchun.html",
+            compact: true,
+          },
+          {
+            num: "무궁화",
+            unit: "호",
+            color: "#f26522",
+            link: "mugunghwa.html",
+          },
+          { num: "누리로", unit: "", color: "#0072bc", link: "nuriro.html" },
+        ],
+      };
+
+      // 상태 변수
+      let currentCategory = "subway"; // 'subway' | 'highspeed' | 'trunk'
+      let currentRegion = "수도권";
+
+      // DOM 요소
+      const gridContainer = document.getElementById("lineGrid");
+      const regionTabs = document.getElementById("regionTabs");
+      const tabButtons = document.querySelectorAll(".region-tabs .tab");
+      const fabBtn = document.getElementById("fabBtn");
+      const fabLabel = document.getElementById("fabLabel");
+      const fabMenu = document.getElementById("fabMenu");
+      const fabBackdrop = document.getElementById("fabBackdrop");
+      const fabMenuItems = document.querySelectorAll(".fab-menu-item");
+      const headerSub = document.getElementById("headerSub");
+
+      // 카테고리/지역별 카드 렌더링
+      function renderView() {
+        gridContainer.innerHTML = "";
+
+        if (currentCategory === "subway") {
+          regionTabs.classList.remove("hidden");
+          headerSub.textContent = "인증할 지하철 노선을 선택해주세요.";
+          fabLabel.textContent = "지하철";
+
+          const lines = railData.subway[currentRegion] || [];
+          renderCards(lines);
+        } else if (currentCategory === "highspeed") {
+          regionTabs.classList.add("hidden");
+          headerSub.textContent = "인증할 고속철도를 선택해주세요.";
+          fabLabel.textContent = "고속철";
+
+          renderCards(railData.highspeed);
+        } else if (currentCategory === "trunk") {
+          regionTabs.classList.add("hidden");
+          headerSub.textContent = "인증할 간선철도를 선택해주세요.";
+          fabLabel.textContent = "간선철도";
+
+          renderCards(railData.trunk);
+        }
+      }
+
+      function renderCards(lines) {
+        if (!lines || lines.length === 0) {
+          gridContainer.innerHTML = `<div class="empty-state">노선 정보가 없습니다.</div>`;
+          return;
+        }
+
+        lines.forEach((line) => {
+          const card = document.createElement("a");
+          card.href = line.link;
+          card.className = `line-card ${line.compact ? "compact" : ""}`;
+          card.style.backgroundColor = line.color;
+
+          card.innerHTML = `
+            <span class="line-num">${line.num}</span>
+            <span class="line-unit">${line.unit}</span>
+          `;
+
+          gridContainer.appendChild(card);
+        });
+      }
+
+      // FAB 토글 동작
+      function toggleFabMenu() {
+        const isOpen = fabMenu.classList.contains("active");
+        if (isOpen) {
+          fabMenu.classList.remove("active");
+          fabBackdrop.classList.remove("active");
+        } else {
+          fabMenu.classList.add("active");
+          fabBackdrop.classList.add("active");
+        }
+      }
+
+      function closeFabMenu() {
+        fabMenu.classList.remove("active");
+        fabBackdrop.classList.remove("active");
+      }
+
+      // 이벤트 리스너 등록
+      fabBtn.addEventListener("click", toggleFabMenu);
+      fabBackdrop.addEventListener("click", closeFabMenu);
+
+      // 메뉴 항목 클릭 처리
+      fabMenuItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          fabMenuItems.forEach((btn) => btn.classList.remove("active"));
+          item.classList.add("active");
+
+          currentCategory = item.getAttribute("data-type");
+          renderView();
+          closeFabMenu();
+        });
+      });
+
+      // 지하철 지역 탭 클릭 처리
+      tabButtons.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabButtons.forEach((btn) => btn.classList.remove("active"));
+          tab.classList.add("active");
+
+          currentRegion = tab.getAttribute("data-region");
+          renderView();
+        });
+      });
+
+      // 초기 실행
+      renderView();
+    </script>
   </body>
 </html>
