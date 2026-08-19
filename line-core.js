@@ -18,6 +18,19 @@ const ALL_LINE_STORAGE_KEYS = [
   "line9_verified_stations",
   "uisinseol_verified_stations",
   "sillim_verified_stations",
+  "incheon1_verified_stations",
+  "incheon2_verified_stations",
+  "gyeongjung_verified_stations",
+  "gyeongchun_verified_stations",
+  "gyeonggang_verified_stations",
+  "suinbundang_verified_stations",
+  "sinbundang_verified_stations",
+  "seohae_verified_stations",
+  "gtxa_verified_stations",
+  "airport_verified_stations",
+  "gimpogold_verified_stations",
+  "everline_verified_stations",
+  "uijeongbu_verified_stations",
 ];
 
 /**

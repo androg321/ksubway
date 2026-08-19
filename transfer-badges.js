@@ -22,7 +22,7 @@ const LINE_COLORS = {
   신분당: "#D4003B",
   경춘: "#0C8E72",
   우이신설: "#B0CE18",
-  의정부경전철: "#F39C00",
+  의정부: "#F39C00",
   서해: "#81A914",
   "GTX-A": "#9A1E46",
   경강: "#0066B3",
@@ -46,8 +46,19 @@ function normalizeLineName(lineStr) {
   const ID_MAP = {
     uisinseol: "우이신설",
     sillim: "신림",
-    // 예: gyeongui: "경의중앙",
-    // 예: sinbundang: "신분당",
+    incheon1: "인천1",
+    incheon2: "인천2",
+    gyeongjung: "경의중앙",
+    gyeongchun: "경춘",
+    gyeonggang: "경강",
+    suinbundang: "수인분당",
+    sinbundang: "신분당",
+    seohae: "서해",
+    airport: "공항",
+    gtxa: "GTX-A",
+    uijeongbu: "의정부",
+    everline: "에버라인",
+    gimpogold: "김포골드",
   };
 
   if (ID_MAP[clean]) {
