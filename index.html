@@ -159,13 +159,50 @@
 
       /* 노선 카드 그리드 */
       .line-grid {
+        flex: 1;
         padding: 8px 20px 24px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 12px;
         align-content: start;
-        /* flex: 1; */
         overflow-y: auto;
+      }
+
+      /* 하단 푸터 (플로팅 버튼 겹침 방지 여백 포함) */
+      .app-footer {
+        grid-column: 1 / -1;
+        padding: 24px 0 80px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-sub);
+        opacity: 0.6;
+      }
+
+      /* 구분선 스타일 추가 */
+      .section-divider {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 12px 0 4px;
+      }
+
+      .section-divider:first-child {
+        margin-top: 4px;
+      }
+
+      .section-divider span {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-sub);
+        white-space: nowrap;
+      }
+
+      .section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background-color: rgba(0, 0, 0, 0.08);
       }
 
       /* 호선 카드 버튼 */
@@ -409,6 +446,91 @@
             { num: "7", unit: "호선", color: "#747f00", link: "line7.html" },
             { num: "8", unit: "호선", color: "#e6186c", link: "line8.html" },
             { num: "9", unit: "호선", color: "#bdb092", link: "line9.html" },
+            {
+              num: "우이신설",
+              unit: "",
+              color: "#B7C450",
+              link: "uisinseol.html",
+            },
+            { num: "신림", unit: "", color: "#6789CA", link: "sillim.html" },
+            {
+              num: "인천1",
+              unit: "",
+              color: "#759CCE",
+              link: "incheon1.html",
+            },
+            {
+              num: "인천2",
+              unit: "",
+              color: "#F5A251",
+              link: "incheon2.html",
+            },
+            {
+              num: "경의중앙",
+              unit: "",
+              color: "#77C4A3",
+              link: "gyeongjoong.html",
+            },
+            {
+              num: "경춘",
+              unit: "",
+              color: "#178C72",
+              link: "gyeongchun.html",
+            },
+            {
+              num: "경강",
+              unit: "",
+              color: "#0054A6",
+              link: "gyeonggang.html",
+            },
+            {
+              num: "수인분당",
+              unit: "",
+              color: "#FABE00",
+              link: "suinbundang.html",
+            },
+            {
+              num: "신분당",
+              unit: "",
+              color: "#D20F46",
+              link: "shinbundang.html",
+            },
+            {
+              num: "서해",
+              unit: "",
+              color: "#8FC31F",
+              link: "seohae.html",
+            },
+            {
+              num: "공항철도",
+              unit: "",
+              color: "#0090D2",
+              link: "airport.html",
+            },
+            {
+              num: "GTX-A",
+              unit: "",
+              color: "#9A6292",
+              link: "gtxa.html",
+            },
+            {
+              num: "김포골드라인",
+              unit: "",
+              color: "#AD8605",
+              link: "gimpogold.html",
+            },
+            {
+              num: "용인에버라인",
+              unit: "",
+              color: "#56AD2D",
+              link: "everline.html",
+            },
+            {
+              num: "의정부경전철",
+              unit: "",
+              color: "#F39C00",
+              link: "uijeongbu.html",
+            },
           ],
           부산: [
             { num: "1", unit: "호선", color: "#f26829", link: "busan1.html" },
@@ -526,6 +648,14 @@
         }
       }
 
+      // 구분선 생성 헬퍼 함수
+      function createDivider(title) {
+        const div = document.createElement("div");
+        div.className = "section-divider";
+        div.innerHTML = `<span>${title}</span>`;
+        return div;
+      }
+
       function renderCards(lines) {
         if (!lines || lines.length === 0) {
           gridContainer.innerHTML = `<div class="empty-state">노선 정보가 없습니다.</div>`;
@@ -533,6 +663,19 @@
         }
 
         lines.forEach((line) => {
+          // 수도권 지하철 구분선 자동 삽입 조건
+          if (currentCategory === "subway" && currentRegion === "수도권") {
+            if (line.num === "1") {
+              gridContainer.appendChild(createDivider("서울 수도권"));
+            } else if (line.num === "인천1") {
+              gridContainer.appendChild(createDivider("인천"));
+            } else if (line.num === "경의중앙") {
+              gridContainer.appendChild(createDivider("광역"));
+            } else if (line.num === "김포골드라인") {
+              gridContainer.appendChild(createDivider("경기"));
+            }
+          }
+
           const card = document.createElement("a");
           card.href = line.link;
           card.className = `line-card ${line.compact ? "compact" : ""}`;
@@ -545,6 +688,12 @@
 
           gridContainer.appendChild(card);
         });
+
+        // 최하단 여백 확보용 Footer 추가
+        const footer = document.createElement("footer");
+        footer.className = "app-footer";
+        footer.innerHTML = "ⓒ 지하철 역 인증기";
+        gridContainer.appendChild(footer);
       }
 
       // FAB 토글 동작

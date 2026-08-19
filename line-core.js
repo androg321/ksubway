@@ -16,6 +16,8 @@ const ALL_LINE_STORAGE_KEYS = [
   "line7_verified_stations",
   "line8_verified_stations",
   "line9_verified_stations",
+  "uisinseol_verified_stations",
+  "sillim_verified_stations",
 ];
 
 /**
