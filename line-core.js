@@ -5,33 +5,35 @@ let isAdminMode = false;
 const container = document.getElementById("stationList");
 const modalOverlay = document.getElementById("stationModal");
 
-// 등록된 모든 노선의 스토리지 키 목록 (전체 노선 방문 상태 동기화용)
-const ALL_LINE_STORAGE_KEYS = [
-  "line1_verified_stations",
-  "line2_verified_stations",
-  "line3_verified_stations",
-  "line4_verified_stations",
-  "line5_verified_stations",
-  "line6_verified_stations",
-  "line7_verified_stations",
-  "line8_verified_stations",
-  "line9_verified_stations",
-  "uisinseol_verified_stations",
-  "sillim_verified_stations",
-  "incheon1_verified_stations",
-  "incheon2_verified_stations",
-  "gyeongjung_verified_stations",
-  "gyeongchun_verified_stations",
-  "gyeonggang_verified_stations",
-  "suinbundang_verified_stations",
-  "sinbundang_verified_stations",
-  "seohae_verified_stations",
-  "gtxa_verified_stations",
-  "airport_verified_stations",
-  "gimpogold_verified_stations",
-  "everline_verified_stations",
-  "uijeongbu_verified_stations",
-];
+// 노선명(정규화된 한글 표기) -> 해당 노선 페이지의 LINE_CONFIG.id 매핑
+// (환승역 인증 시, 실제로 그 역이 지나는 노선의 저장소에만 동기화하기 위해 사용)
+const LINE_NAME_TO_ID = {
+  1: "line1",
+  2: "line2",
+  3: "line3",
+  4: "line4",
+  5: "line5",
+  6: "line6",
+  7: "line7",
+  8: "line8",
+  9: "line9",
+  우이신설: "uisinseol",
+  신림: "sillim",
+  인천1: "incheon1",
+  인천2: "incheon2",
+  경의중앙: "gyeongjung",
+  경춘: "gyeongchun",
+  경강: "gyeonggang",
+  수인분당: "suinbundang",
+  신분당: "sinbundang",
+  서해: "seohae",
+  공항: "airport",
+  공항철도: "airport",
+  "GTX-A": "gtxa",
+  김포골드: "gimpogold",
+  에버라인: "everline",
+  의정부: "uijeongbu",
+};
 
 /**
  * 현재 노선 계통 데이터를 동적으로 가져오는 헬퍼 함수
@@ -152,6 +154,12 @@ function updateStats() {
   document.getElementById("verifiedCount").innerText = verifiedStations;
   document.getElementById("percentageText").innerText = `${percentage}%`;
   document.getElementById("progressFill").style.width = `${percentage}%`;
+
+  // 마이페이지 종합 진행도 계산을 위해 이 노선의 전체 역 개수를 별도 저장
+  // (구글 시트 로딩이 끝난 시점의 실제 총 역 개수를 캐싱해 둠)
+  if (totalStations > 0) {
+    localStorage.setItem(`${LINE_CONFIG.id}_total_stations`, totalStations);
+  }
 }
 
 function toggleAdminMode() {
@@ -294,8 +302,25 @@ function verifyStation() {
   targetStation.verified = true;
   saveProgress();
 
-  // 2. 다른 모든 노선의 LocalStorage를 탐색하여 동일 역 ID(예: cityhall) 방문 인증 상태 연동
-  ALL_LINE_STORAGE_KEYS.forEach((storageKey) => {
+  // 2. 이 역이 실제로 지나가는 환승 노선만 골라서, 그 노선들의 스토리지에만 인증 상태 연동
+  //    (station.line 예: "1/2/우이신설" 처럼 슬래시로 구분된 실제 환승 노선 목록)
+  const rawTransfers = Array.isArray(targetStation.transfers)
+    ? targetStation.transfers
+    : targetStation.line
+    ? targetStation.line.split("/").map((s) => s.trim())
+    : [];
+
+  rawTransfers.forEach((lineStr) => {
+    const normalized =
+      typeof normalizeLineName === "function"
+        ? normalizeLineName(lineStr)
+        : String(lineStr).trim();
+    const targetLineId = LINE_NAME_TO_ID[normalized];
+
+    // 현재 노선이거나, 매핑되지 않는(KTX 등) 노선은 건너뜀
+    if (!targetLineId || targetLineId === LINE_CONFIG.id) return;
+
+    const storageKey = `${targetLineId}_verified_stations`;
     try {
       const savedData = localStorage.getItem(storageKey);
       const parsedData = savedData ? JSON.parse(savedData) : {};

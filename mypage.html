@@ -4,712 +4,1366 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
-    <title>마이페이지 - 호선별 인증 현황</title>
+    <title>마이페이지 - 지하철 역 인증기</title>
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+
     <style>
+      :root {
+        --bg-color: #f9fafb;
+        --card-bg: #ffffff;
+        --text-main: #191f28;
+        --text-sub: #8b95a1;
+        --accent: #191f28;
+      }
+
       * {
         box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-      }
-      body {
-        font-family: "Pretendard", -apple-system, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f5f7f9;
-        color: #111;
+        -webkit-tap-highlight-color: transparent;
       }
-      header {
-        background-color: #ffffff;
-        padding: 12px 16px;
-        font-size: 1.15rem;
-        font-weight: 700;
-        border-bottom: 1px solid #eee;
-        position: sticky;
-        top: 0;
-        z-index: 5;
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: "Pretendard", sans-serif;
+        background-color: #e5e8eb;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: center;
       }
-      .header-left {
+
+      .app-container {
+        width: 100%;
+        max-width: 480px;
+        height: 100%;
+        overflow: hidden;
+        background-color: var(--bg-color);
+        position: relative;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      /* 헤더 */
+      header {
+        background-color: var(--bg-color);
+        padding: 20px 16px;
         display: flex;
         align-items: center;
         gap: 8px;
+        flex-shrink: 0;
       }
+
       .back-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        color: #374151;
+        color: var(--text-main);
         text-decoration: none;
+        flex-shrink: 0;
+        transition: background-color 0.15s ease, transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: scale(0.92);
+        background-color: #eceff2;
       }
       .back-btn svg {
         width: 22px;
         height: 22px;
         fill: currentColor;
       }
-      .container {
-        padding: 20px 16px 40px 16px;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      .card {
-        background-color: #ffffff;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        border: 1px solid #e5e7eb;
-      }
-      .card-title {
-        font-size: 1.05rem;
+
+      header h1 {
+        font-size: 18px;
         font-weight: 700;
-        color: #1f2937;
-        margin: 0 0 14px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        color: var(--text-main);
+        letter-spacing: -0.3px;
       }
-      .total-summary-box {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        color: #ffffff;
-        border-radius: 14px;
-        padding: 18px 16px;
+
+      /* 스크롤 영역 */
+      .content {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 4px 20px 40px;
+      }
+
+      /* 전체 진행도 바 카드 */
+      .summary-bar-card {
+        background-color: var(--card-bg);
+        border-radius: 20px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
         margin-bottom: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
       }
-      .total-summary-header {
+      .summary-bar-head {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: baseline;
+        margin-bottom: 10px;
       }
-      .total-title {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #94a3b8;
+      .summary-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-sub);
       }
-      .total-value {
-        font-size: 1.4rem;
+      .summary-percent {
+        font-size: 22px;
         font-weight: 800;
-        color: #38bdf8;
+        color: var(--text-main);
+        letter-spacing: -0.3px;
       }
-      .total-progress-bg {
-        width: 100%;
+      .summary-progress-bg {
         height: 10px;
-        background-color: rgba(255, 255, 255, 0.15);
-        border-radius: 5px;
+        border-radius: 6px;
+        background-color: #eef0f2;
         overflow: hidden;
       }
-      .total-progress-fill {
+      .summary-progress-fill {
         height: 100%;
+        border-radius: 6px;
+        background-color: var(--accent);
         width: 0%;
-        background-color: #38bdf8;
-        border-radius: 5px;
-        transition: width 0.4s ease;
+        transition: width 0.5s ease;
       }
-      .line-summary-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+      .summary-meta {
+        margin-top: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-main);
       }
-      .line-summary-card {
-        background-color: #f8fafc;
-        border: 1px solid #f1f5f9;
-        border-radius: 12px;
-        padding: 14px 16px;
+      .summary-meta b {
+        font-weight: 800;
+      }
+      .summary-note {
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--text-sub);
+        line-height: 1.5;
+      }
+
+      /* 노선별 진행도 버튼 */
+      .open-modal-btn {
+        width: 100%;
+        background-color: var(--card-bg);
+        border: none;
+        border-radius: 18px;
+        padding: 18px 20px;
         display: flex;
         align-items: center;
-        gap: 14px;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        cursor: pointer;
+        font-family: inherit;
+        margin-bottom: 16px;
+        transition: transform 0.12s ease, opacity 0.12s ease;
       }
-      .subway-badge {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+      .open-modal-btn:active {
+        transform: scale(0.98);
+        opacity: 0.85;
+      }
+      .open-modal-btn .left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .open-modal-btn .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eef2ff;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: 800;
-        font-size: 0.95rem;
         flex-shrink: 0;
       }
-      .line-info-box {
-        flex: 1;
+      .open-modal-btn .icon svg {
+        width: 18px;
+        height: 18px;
+        fill: #4f5fff;
+      }
+      .open-modal-btn .title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .open-modal-btn .sub {
+        font-size: 12px;
+        color: var(--text-sub);
+        margin-top: 2px;
+      }
+      .open-modal-btn .chevron {
+        width: 18px;
+        height: 18px;
+        fill: var(--text-sub);
+        flex-shrink: 0;
+      }
+
+      /* 하이라이트 미니 리스트 */
+      .mini-section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-sub);
+        margin: 4px 4px 10px;
+      }
+
+      .mini-list {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
+        margin-bottom: 20px;
       }
-      .line-info-top {
+
+      .mini-row {
+        background-color: var(--card-bg);
+        border-radius: 14px;
+        padding: 12px 14px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        gap: 10px;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
       }
-      .line-name {
-        font-size: 0.95rem;
+
+      .mini-badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-align: center;
+        line-height: 1.1;
+        padding: 2px;
+      }
+
+      .mini-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .mini-name {
+        font-size: 13.5px;
         font-weight: 700;
-        color: #1e293b;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .line-count-percent {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #475569;
-      }
-      .line-progress-bg {
-        width: 100%;
-        height: 6px;
-        background-color: #e2e8f0;
+      .mini-bar-bg {
+        margin-top: 5px;
+        height: 5px;
         border-radius: 3px;
+        background-color: #eef0f2;
         overflow: hidden;
       }
-      .line-progress-fill {
+      .mini-bar-fill {
         height: 100%;
-        width: 0%;
         border-radius: 3px;
-        transition: width 0.4s ease;
       }
-      textarea.backup-area {
-        width: 100%;
-        height: 90px;
-        padding: 10px;
-        font-size: 0.8rem;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        resize: none;
-        margin-bottom: 12px;
-        font-family: monospace;
-        background-color: #f9fafb;
+      .mini-percent {
+        font-size: 12.5px;
+        font-weight: 800;
+        color: var(--text-main);
+        flex-shrink: 0;
+        width: 40px;
+        text-align: right;
       }
-      button.btn {
-        width: 100%;
-        padding: 14px;
-        border: none;
-        border-radius: 10px;
-        font-size: 0.95rem;
+
+      /* 데이터 관리 카드 */
+      .manage-card {
+        background-color: var(--card-bg);
+        border-radius: 18px;
+        padding: 6px 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        margin-bottom: 24px;
+      }
+      .manage-title {
+        font-size: 13px;
         font-weight: 700;
+        color: var(--text-sub);
+        padding: 12px 12px 4px;
+      }
+      .manage-row {
+        width: 100%;
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        border-radius: 12px;
         cursor: pointer;
+        font-family: inherit;
+        text-align: left;
+        transition: background-color 0.15s ease;
       }
-      .btn-primary {
-        background-color: #2563eb;
-        color: white;
+      .manage-row:active {
+        background-color: #f5f6f8;
       }
-      .btn-secondary {
-        background-color: #f1f5f9;
-        color: #1e293b;
-        border: 1px solid #cbd5e1;
+      .manage-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
-      .btn-success {
-        background-color: #10b981;
-        color: white;
+      .manage-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: #eef2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
       }
-      .btn-danger {
-        background-color: #ef4444;
-        color: white;
+      .manage-row.danger .manage-icon {
+        background-color: #fef2f2;
       }
-      .info-text {
-        font-size: 0.85rem;
-        color: #6b7280;
-        margin-bottom: 16px;
-        line-height: 1.4;
+      .manage-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
       }
+      .manage-row.danger .manage-label {
+        color: #e11d48;
+      }
+      .manage-sub {
+        font-size: 11.5px;
+        color: var(--text-sub);
+        margin-top: 2px;
+      }
+      .manage-row .chevron {
+        width: 16px;
+        height: 16px;
+        fill: var(--text-sub);
+        flex-shrink: 0;
+      }
+
+      .empty-note {
+        text-align: center;
+        color: var(--text-sub);
+        font-size: 13px;
+        padding: 20px 10px;
+      }
+
+      /* 모달 (하단 시트) */
       .modal-overlay {
         display: none;
         position: fixed;
-        z-index: 10;
+        z-index: 50;
         left: 0;
         top: 0;
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.4);
-        align-items: center;
+        align-items: flex-end;
         justify-content: center;
-        padding: 20px;
         opacity: 0;
-        transition: opacity 0.2s ease;
+        transition: opacity 0.25s ease;
       }
       .modal-overlay.show {
         display: flex;
         opacity: 1;
       }
-      .modal-content {
-        background-color: white;
+
+      .bottom-sheet {
         width: 100%;
         max-width: 480px;
-        border-radius: 16px;
-        padding: 24px 20px;
-        position: relative;
-      }
-      .close-btn {
-        position: absolute;
-        top: 16px;
-        right: 20px;
-        font-size: 24px;
-        cursor: pointer;
-        color: #aaa;
-      }
-      .tab-menu {
+        max-height: 85vh;
+        background-color: var(--card-bg);
+        border-radius: 22px 22px 0 0;
+        padding: 14px 0 0;
         display: flex;
-        gap: 8px;
-        margin-bottom: 16px;
-        border-bottom: 1px solid #e5e7eb;
-        padding-bottom: 8px;
-        overflow-x: auto;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        padding-bottom: env(safe-area-inset-bottom);
       }
-      .tab-link {
-        flex: 0 0 auto;
-        padding: 8px 12px;
-        background: none;
-        border: none;
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #6b7280;
+      .modal-overlay.show .bottom-sheet {
+        transform: translateY(0);
+      }
+
+      .drag-handle {
+        width: 40px;
+        height: 4px;
+        background-color: #e0e0e0;
+        border-radius: 2px;
+        margin: 0 auto 14px auto;
+        flex-shrink: 0;
+      }
+
+      .sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px 12px;
+        flex-shrink: 0;
+      }
+      .sheet-header h2 {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--text-main);
+      }
+      .sheet-close {
+        font-size: 22px;
+        color: #aaa;
         cursor: pointer;
-        border-bottom: 2px solid transparent;
+        line-height: 1;
+        padding: 4px;
       }
-      .tab-link.active {
-        color: #2563eb;
-        border-bottom-color: #2563eb;
+
+      /* 노선/철도 카테고리 탭 */
+      .mp-tabs {
+        display: flex;
+        gap: 6px;
+        padding: 0 20px 12px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        flex-shrink: 0;
+        border-bottom: 1px solid #f1f2f4;
       }
-      .tab-content,
-      .region-tab-content {
+      .mp-tabs::-webkit-scrollbar {
         display: none;
       }
-      .tab-content.active,
-      .region-tab-content.active {
-        display: block;
+      .mp-tab {
+        flex-shrink: 0;
+        padding: 8px 14px;
+        border-radius: 16px;
+        border: none;
+        background-color: #f3f4f6;
+        color: #4b5563;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+      .mp-tab.active {
+        background-color: var(--text-main);
+        color: #ffffff;
+      }
+
+      .sheet-body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px 20px 24px;
+      }
+
+      .sheet-divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 18px 2px 8px;
+      }
+      .sheet-divider:first-child {
+        margin-top: 6px;
+      }
+      .sheet-divider span {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-sub);
+        white-space: nowrap;
+      }
+      .sheet-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background-color: #f0f1f3;
+      }
+
+      .line-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 2px;
+        text-decoration: none;
+      }
+      .line-row.placeholder-row {
+        cursor: default;
+      }
+
+      .line-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-align: center;
+        line-height: 1.1;
+        padding: 2px;
+      }
+
+      .line-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .line-name-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .line-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .line-stat {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-sub);
+        flex-shrink: 0;
+      }
+      .line-stat b {
+        color: var(--text-main);
+      }
+      .line-bar-bg {
+        margin-top: 6px;
+        height: 6px;
+        border-radius: 3px;
+        background-color: #eef0f2;
+        overflow: hidden;
+      }
+      .line-bar-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.4s ease;
+      }
+      .line-bar-fill.unknown {
+        background-color: #e5e7eb !important;
+      }
+      .line-unvisited-label {
+        font-size: 11px;
+        color: #c2c7cd;
+        font-weight: 600;
+        margin-top: 6px;
       }
     </style>
   </head>
   <body>
-    <header>
-      <div class="header-left">
+    <div class="app-container">
+      <header>
         <a href="index.html" class="back-btn" aria-label="메인 페이지로 이동">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
           </svg>
         </a>
-        <span>👤 마이페이지</span>
-      </div>
-    </header>
+        <h1>마이페이지</h1>
+      </header>
 
-    <div class="container">
-      <div class="card">
-        <div class="card-title"><span>📊 종합 인증 현황</span></div>
-        <div class="total-summary-box">
-          <div class="total-summary-header">
-            <span class="total-title">전체 수도권 지하철 달성률</span>
-            <span class="total-value" id="totalPercentText">0%</span>
+      <div class="content">
+        <!-- 전체 진행도 바 -->
+        <div class="summary-bar-card">
+          <div class="summary-bar-head">
+            <span class="summary-title">전체 진행도</span>
+            <span class="summary-percent" id="summaryPercent">0%</span>
           </div>
-          <div class="total-progress-bg">
-            <div class="total-progress-fill" id="totalProgressFill"></div>
+          <div class="summary-progress-bg">
+            <div class="summary-progress-fill" id="summaryProgressFill"></div>
           </div>
-          <div style="font-size: 0.8rem; color: #cbd5e1; text-align: right">
-            총 인증
-            <span id="totalVerifiedCount" style="color: #fff; font-weight: 700"
-              >0</span
-            >
-            / <span id="totalStationCount">0</span>개 역
+          <div class="summary-meta">
+            <b id="verifiedTotal">0</b>개 / <span id="stationTotal">0</span>개
+            역 인증
           </div>
+          <div class="summary-note" id="summaryNote"></div>
         </div>
-        <button class="btn btn-secondary" onclick="openLineModal()">
-          🔍 호선별 달성률 상세 보기
+
+        <!-- 노선별 진행도 모달 오픈 버튼 -->
+        <button class="open-modal-btn" onclick="openLineModal()">
+          <div class="left">
+            <div class="icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z" />
+              </svg>
+            </div>
+            <div>
+              <div class="title">노선별 진행도 보기</div>
+              <div class="sub" id="lineCountSub">수도권 지하철 · 전국 철도</div>
+            </div>
+          </div>
+          <svg
+            class="chevron"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+          </svg>
         </button>
-      </div>
 
-      <div class="card">
-        <h3 class="card-title">💾 데이터 관리</h3>
-        <p class="info-text">
-          기기 변경이나 백업이 필요할 때 인증 기록을 추출하거나 이전 기록을
-          복원할 수 있습니다.
-        </p>
-        <button class="btn btn-primary" onclick="openBackupModal()">
-          📦 백업 및 복원하기
-        </button>
-      </div>
-
-      <div class="card" style="border-color: #fecaca">
-        <h3 class="card-title" style="color: #dc2626">⚠️ 데이터 초기화</h3>
-        <p class="info-text">
-          이 기기에 저장된 모든 방문 인증 기록을 삭제합니다.
-        </p>
-        <button class="btn btn-danger" onclick="resetData()">
-          🗑️ 모든 데이터 초기화
-        </button>
-      </div>
-    </div>
-
-    <!-- 호선별 달성률 모달 -->
-    <div id="lineModal" class="modal-overlay">
-      <div
-        class="modal-content"
-        style="max-height: 85vh; display: flex; flex-direction: column"
-      >
-        <span class="close-btn" onclick="closeLineModal()">&times;</span>
-        <h3 style="margin-top: 0; margin-bottom: 16px; color: #111">
-          📊 호선별 인증 현황
-        </h3>
-        <div class="tab-menu" id="regionTabMenu">
-          <button class="tab-link active" onclick="switchRegionTab('capital')">
-            수도권
-          </button>
-          <button class="tab-link" onclick="switchRegionTab('busan')">
-            부산
-          </button>
+        <!-- 가장 진행도가 높은 노선 TOP 3 미리보기 -->
+        <div id="topPreviewSection" style="display: none">
+          <div class="mini-section-title">진행도가 가장 높은 노선</div>
+          <div class="mini-list" id="topPreviewList"></div>
         </div>
-        <div style="overflow-y: auto; flex: 1; padding-right: 2px">
-          <div id="region-capital" class="region-tab-content active">
-            <div class="line-summary-grid" id="lineSummaryGrid"></div>
-          </div>
-          <div id="region-busan" class="region-tab-content">
-            <p class="info-text" style="text-align: center; padding: 40px 0">
-              부산 도시철도 데이터 준비 중입니다.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- 백업 & 복원 모달 -->
-    <div id="backupModal" class="modal-overlay">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeBackupModal()">&times;</span>
-        <h3 style="margin-top: 0; margin-bottom: 16px; color: #111">
-          📦 백업 및 복원
-        </h3>
-        <div class="tab-menu">
-          <button class="tab-link active" onclick="switchTab('exportTab')">
-            📤 내보내기(백업)
-          </button>
-          <button class="tab-link" onclick="switchTab('importTab')">
-            📥 불러오기(복원)
-          </button>
-        </div>
-        <div id="exportTab" class="tab-content active">
-          <p class="info-text">아래 생성된 백업 코드를 복사하여 보관하세요.</p>
-          <textarea id="exportText" class="backup-area" readonly></textarea>
-          <button class="btn btn-primary" onclick="copyBackupCode()">
-            📋 백업 코드 복사하기
-          </button>
-        </div>
-        <div id="importTab" class="tab-content">
-          <p class="info-text">
-            이전에 보관해 둔 백업 코드를 아래에 붙여넣고 적용 버튼을 누르세요.
-          </p>
-          <textarea
-            id="importText"
-            class="backup-area"
-            placeholder="백업 코드를 여기에 붙여넣으세요..."
-          ></textarea>
-          <button class="btn btn-success" onclick="applyBackupCode()">
-            📥 기록 불러오기 적용
-          </button>
-        </div>
-      </div>
-    </div>
+        <!-- 데이터 관리: 백업 / 복원 / 초기화 -->
+        <div class="manage-card">
+          <div class="manage-title">데이터 관리</div>
 
-    <!-- 외부 스크립트 연결 -->
-    <script src="stations.js"></script>
-    <script src="stations-db.js"></script>
-    <script>
-      const LINE_STYLES = {
-        "1호선": { bg: "#0052A4", text: "1" },
-        "2호선": { bg: "#33A23D", text: "2" },
-        "3호선": { bg: "#EF7C1C", text: "3" },
-        "4호선": { bg: "#00A4E9", text: "4" },
-        "5호선": { bg: "#996CAD", text: "5" },
-        "6호선": { bg: "#CD7C2F", text: "6" },
-        "7호선": { bg: "#747F00", text: "7" },
-        "8호선": { bg: "#EA545D", text: "8" },
-        "9호선": { bg: "#BDB092", text: "9" },
-        경의중앙선: { bg: "#77C4A3", text: "경의" },
-        수인분당선: { bg: "#EA9811", text: "수인" },
-        신분당선: { bg: "#D4003B", text: "신" },
-      };
-
-      // 노선 명칭 정규화 함수 (1호선, 2호선, 3호선 등 모든 호선 및 지선을 표준 노선명으로 정규화)
-      function parseSingleLineName(raw) {
-        if (!raw) return "";
-        let name = raw.trim().replace(/^서울\s*|지하철\s*/g, "");
-
-        if (
-          name.includes("1호선") ||
-          name.includes("경인선") ||
-          name.includes("경부선") ||
-          name.includes("병점지선")
-        ) {
-          return "1호선";
-        }
-
-        if (
-          name.includes("2호선") ||
-          name.includes("성수지선") ||
-          name.includes("신정지선")
-        ) {
-          return "2호선";
-        }
-
-        if (name.includes("3호선") || name.includes("일산선")) {
-          return "3호선";
-        }
-
-        if (/^\d+$/.test(name)) name += "호선";
-        return name;
-      }
-
-      // 개별 노선 페이지(line1.html, line2.html, line3.html 등)의 storageKey 규칙인 lineN_verified_stations 매핑
-      function getStorageKeyByLineName(lineName) {
-        const num = lineName.replace(/[^0-9]/g, "");
-        return num
-          ? `line${num}_verified_stations`
-          : `line_${lineName.replace(/\s+/g, "_")}_verified_stations`;
-      }
-
-      function ensureStationMaster() {
-        if (typeof stationMaster === "undefined" || !stationMaster) {
-          window.stationMaster = {};
-        }
-
-        if (window.DEFAULT_STATION_DB) {
-          Object.keys(window.DEFAULT_STATION_DB).forEach((rawLineName) => {
-            const lineName = parseSingleLineName(rawLineName);
-            const stationList = window.DEFAULT_STATION_DB[rawLineName];
-            stationList.forEach((stName, idx) => {
-              const customId = `db_${lineName}_${stName}_${idx + 1}`;
-              const exists = Object.values(stationMaster).some(
-                (s) =>
-                  s.name === stName && getLinesFromStation(s).includes(lineName)
-              );
-
-              if (!exists) {
-                stationMaster[customId] = {
-                  id: customId,
-                  name: stName,
-                  line: lineName,
-                };
-              }
-            });
-          });
-        }
-      }
-
-      function getLinesFromStation(station) {
-        if (!station) return [];
-        let lines = [];
-        if (station.line) {
-          station.line.split("/").forEach((rl) => {
-            const norm = parseSingleLineName(rl);
-            if (norm && !lines.includes(norm)) lines.push(norm);
-          });
-        }
-        return lines;
-      }
-
-      function getLineStyle(lineName) {
-        return (
-          LINE_STYLES[lineName] || { bg: "#475569", text: lineName.slice(0, 2) }
-        );
-      }
-
-      async function initMyPage() {
-        if (typeof loadStationsFromGoogleSheet === "function") {
-          try {
-            await loadStationsFromGoogleSheet();
-          } catch (e) {}
-        }
-        ensureStationMaster();
-        renderProgressSummary();
-      }
-
-      window.addEventListener("DOMContentLoaded", initMyPage);
-
-      function renderProgressSummary() {
-        ensureStationMaster();
-        const gridContainer = document.getElementById("lineSummaryGrid");
-        gridContainer.innerHTML = "";
-
-        const lineGroups = {};
-        const allUniqueNames = new Set();
-
-        Object.keys(stationMaster).forEach((id) => {
-          const station = stationMaster[id];
-          if (!station || !station.name) return;
-
-          const stName = station.name.trim();
-          allUniqueNames.add(stName);
-
-          getLinesFromStation(station).forEach((normLine) => {
-            if (!lineGroups[normLine]) lineGroups[normLine] = new Map();
-            if (!lineGroups[normLine].has(stName)) {
-              lineGroups[normLine].set(stName, []);
-            }
-            lineGroups[normLine].get(stName).push(id);
-          });
-        });
-
-        const sortedLines = Object.keys(lineGroups).sort((a, b) => {
-          const numA = parseInt(a.replace(/[^0-9]/g, ""));
-          const numB = parseInt(b.replace(/[^0-9]/g, ""));
-          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-          return a.localeCompare(b, "ko");
-        });
-
-        let totalVerifiedAll = 0;
-        const combinedBackupData = {};
-
-        allUniqueNames.forEach((stName) => {
-          const relatedStations = Object.values(stationMaster).filter(
-            (s) => s && s.name && s.name.trim() === stName
-          );
-
-          let isVerified = false;
-          relatedStations.forEach((station) => {
-            getLinesFromStation(station).forEach((normLine) => {
-              const storageKey = getStorageKeyByLineName(normLine);
-              const savedData = JSON.parse(
-                localStorage.getItem(storageKey) || "{}"
-              );
-              if (savedData[station.id] || savedData[stName]) {
-                isVerified = true;
-                combinedBackupData[station.id] = true;
-              }
-            });
-          });
-
-          if (isVerified) totalVerifiedAll++;
-        });
-
-        sortedLines.forEach((lineName) => {
-          const stationMap = lineGroups[lineName];
-          const totalLineStations = stationMap.size;
-          if (totalLineStations === 0) return;
-
-          const storageKey = getStorageKeyByLineName(lineName);
-          const savedData = JSON.parse(
-            localStorage.getItem(storageKey) || "{}"
-          );
-
-          let lineVerifiedCount = 0;
-          stationMap.forEach((ids, stName) => {
-            const isVerified =
-              savedData[stName] || ids.some((id) => savedData[id]);
-            if (isVerified) {
-              lineVerifiedCount++;
-            }
-          });
-
-          const linePercent = Math.round(
-            (lineVerifiedCount / totalLineStations) * 100
-          );
-          const style = getLineStyle(lineName);
-
-          const card = document.createElement("div");
-          card.className = "line-summary-card";
-          card.innerHTML = `
-            <div class="subway-badge" style="background-color: ${style.bg};">${style.text}</div>
-            <div class="line-info-box">
-              <div class="line-info-top">
-                <span class="line-name">${lineName}</span>
-                <span class="line-count-percent">${lineVerifiedCount}/${totalLineStations}역 (${linePercent}%)</span>
-              </div>
-              <div class="line-progress-bg">
-                <div class="line-progress-fill" style="width: ${linePercent}%; background-color: ${style.bg};"></div>
+          <button class="manage-row" onclick="backupData()">
+            <div class="manage-left">
+              <div class="manage-icon">⬇️</div>
+              <div>
+                <div class="manage-label">백업 파일 내보내기</div>
+                <div class="manage-sub">
+                  지금까지의 인증 기록을 파일로 저장해요
+                </div>
               </div>
             </div>
-          `;
-          gridContainer.appendChild(card);
-        });
+            <svg
+              class="chevron"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+            </svg>
+          </button>
 
+          <button class="manage-row" onclick="triggerRestore()">
+            <div class="manage-left">
+              <div class="manage-icon">⬆️</div>
+              <div>
+                <div class="manage-label">백업 파일로 복원</div>
+                <div class="manage-sub">저장해둔 파일을 불러와 되돌려요</div>
+              </div>
+            </div>
+            <svg
+              class="chevron"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+            </svg>
+          </button>
+          <input
+            type="file"
+            id="restoreInput"
+            accept="application/json"
+            style="display: none"
+            onchange="handleRestoreFile(event)"
+          />
+
+          <button class="manage-row danger" onclick="resetAllData()">
+            <div class="manage-left">
+              <div class="manage-icon">🗑️</div>
+              <div>
+                <div class="manage-label">전체 방문 데이터 초기화</div>
+                <div class="manage-sub">모든 노선의 인증 기록을 삭제해요</div>
+              </div>
+            </div>
+            <svg
+              class="chevron"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 노선별 진행도 모달 -->
+    <div class="modal-overlay" id="lineModal">
+      <div class="bottom-sheet">
+        <div class="drag-handle"></div>
+        <div class="sheet-header">
+          <h2>노선별 진행도</h2>
+          <span class="sheet-close" onclick="closeLineModal()">&times;</span>
+        </div>
+        <div class="mp-tabs" id="mpTabs"></div>
+        <div class="sheet-body" id="sheetBody"></div>
+      </div>
+    </div>
+
+    <script src="stations-db.js"></script>
+    <script>
+      // ==========================================
+      // 마이페이지: 노선별 진행도 종합
+      // ==========================================
+
+      // 수도권 지하철 노선 마스터 목록 (실제 진행도 데이터가 있는 유일한 카테고리)
+      // dbKey: stations-db.js(window.DEFAULT_STATION_DB)의 대체(fallback) 총 역수 조회용 키
+      const MYPAGE_LINES = [
+        {
+          section: "서울 수도권",
+          id: "line1",
+          name: "1호선",
+          color: "#0052a4",
+          link: "line1.html",
+          dbKey: "1호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line2",
+          name: "2호선",
+          color: "#00a84d",
+          link: "line2.html",
+          dbKey: "2호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line3",
+          name: "3호선",
+          color: "#ef7c1c",
+          link: "line3.html",
+          dbKey: "3호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line4",
+          name: "4호선",
+          color: "#00a5de",
+          link: "line4.html",
+          dbKey: "4호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line5",
+          name: "5호선",
+          color: "#996cac",
+          link: "line5.html",
+          dbKey: "5호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line6",
+          name: "6호선",
+          color: "#cd7c2f",
+          link: "line6.html",
+          dbKey: "6호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line7",
+          name: "7호선",
+          color: "#747f00",
+          link: "line7.html",
+          dbKey: "7호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line8",
+          name: "8호선",
+          color: "#e6186c",
+          link: "line8.html",
+          dbKey: "8호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "line9",
+          name: "9호선",
+          color: "#bdb092",
+          link: "line9.html",
+          dbKey: "9호선",
+        },
+        {
+          section: "서울 수도권",
+          id: "uisinseol",
+          name: "우이신설선",
+          color: "#B7C450",
+          link: "uisinseol.html",
+          dbKey: "우이신설",
+        },
+        {
+          section: "서울 수도권",
+          id: "sillim",
+          name: "신림선",
+          color: "#6789CA",
+          link: "sillim.html",
+          dbKey: "신림",
+        },
+        {
+          section: "인천",
+          id: "incheon1",
+          name: "인천1호선",
+          color: "#759CCE",
+          link: "incheon1.html",
+          dbKey: "인천1",
+        },
+        {
+          section: "인천",
+          id: "incheon2",
+          name: "인천2호선",
+          color: "#F5A251",
+          link: "incheon2.html",
+          dbKey: "인천2",
+        },
+        {
+          section: "광역",
+          id: "gyeongjung",
+          name: "경의중앙선",
+          color: "#77C4A3",
+          link: "gyeongjung.html",
+          dbKey: "경의중앙",
+        },
+        {
+          section: "광역",
+          id: "gyeongchun",
+          name: "경춘선",
+          color: "#178C72",
+          link: "gyeongchun.html",
+          dbKey: "경춘",
+        },
+        {
+          section: "광역",
+          id: "gyeonggang",
+          name: "경강선",
+          color: "#0054A6",
+          link: "gyeonggang.html",
+          dbKey: "경강",
+        },
+        {
+          section: "광역",
+          id: "suinbundang",
+          name: "수인분당선",
+          color: "#FABE00",
+          link: "suinbundang.html",
+          dbKey: "수인분당",
+        },
+        {
+          section: "광역",
+          id: "sinbundang",
+          name: "신분당선",
+          color: "#D20F46",
+          link: "sinbundang.html",
+          dbKey: "신분당",
+        },
+        {
+          section: "광역",
+          id: "seohae",
+          name: "서해선",
+          color: "#8FC31F",
+          link: "seohae.html",
+          dbKey: "서해",
+        },
+        {
+          section: "광역",
+          id: "airport",
+          name: "공항철도",
+          color: "#0090D2",
+          link: "airport.html",
+          dbKey: "공항철도",
+        },
+        {
+          section: "광역",
+          id: "gtxa",
+          name: "GTX-A",
+          color: "#9A6292",
+          link: "gtxa.html",
+          dbKey: "GTX-A",
+        },
+        {
+          section: "경기",
+          id: "gimpogold",
+          name: "김포골드라인",
+          color: "#AD8605",
+          link: "gimpogold.html",
+          dbKey: null,
+        },
+        {
+          section: "경기",
+          id: "everline",
+          name: "용인에버라인",
+          color: "#56AD2D",
+          link: "everline.html",
+          dbKey: null,
+        },
+        {
+          section: "경기",
+          id: "uijeongbu",
+          name: "의정부경전철",
+          color: "#F39C00",
+          link: "uijeongbu.html",
+          dbKey: null,
+        },
+      ];
+
+      // 추후 인증 시스템이 붙을 다른 지역/철도 노선의 틀 (아직 진행도 데이터는 없음)
+      // index.html의 railData와 동일한 목록을 사용
+      const OTHER_CATEGORY_DATA = {
+        busan: [
+          { num: "1", unit: "호선", color: "#f26829", link: "busan1.html" },
+          { num: "2", unit: "호선", color: "#84c225", link: "busan2.html" },
+          { num: "3", unit: "호선", color: "#bb8c00", link: "busan3.html" },
+          { num: "4", unit: "호선", color: "#217dc1", link: "busan4.html" },
+          {
+            num: "동해",
+            unit: "선",
+            color: "#0054a6",
+            link: "busan-donghae.html",
+          },
+          {
+            num: "김해",
+            unit: "경전철",
+            color: "#8652a1",
+            link: "busan-gimhae.html",
+          },
+        ],
+        daegu: [
+          { num: "1", unit: "호선", color: "#d93f20", link: "daegu1.html" },
+          { num: "2", unit: "호선", color: "#00aa4f", link: "daegu2.html" },
+          { num: "3", unit: "호선", color: "#ffb400", link: "daegu3.html" },
+        ],
+        gwangju: [
+          { num: "1", unit: "호선", color: "#00913a", link: "gwangju1.html" },
+        ],
+        daejeon: [
+          { num: "1", unit: "호선", color: "#00743b", link: "daejeon1.html" },
+        ],
+        highspeed: [
+          { num: "KTX", unit: "", color: "#003b82", link: "ktx.html" },
+          { num: "SRT", unit: "", color: "#5d1f3b", link: "srt.html" },
+          { num: "KTX", unit: "-이음", color: "#005a9c", link: "ktx-eum.html" },
+          {
+            num: "KTX",
+            unit: "-청룡",
+            color: "#002b5c",
+            link: "ktx-cheongryong.html",
+          },
+        ],
+        trunk: [
+          {
+            num: "ITX",
+            unit: "-새마을",
+            color: "#b9001b",
+            link: "itx-saemaeul.html",
+          },
+          {
+            num: "ITX",
+            unit: "-마음",
+            color: "#d11f26",
+            link: "itx-maum.html",
+          },
+          {
+            num: "ITX",
+            unit: "-청춘",
+            color: "#0066b3",
+            link: "itx-cheongchun.html",
+          },
+          {
+            num: "무궁화",
+            unit: "호",
+            color: "#f26522",
+            link: "mugunghwa.html",
+          },
+          { num: "누리로", unit: "", color: "#0072bc", link: "nuriro.html" },
+        ],
+      };
+
+      // 모달 탭 정의: metro만 실제 진행도를 보여주고 나머지는 준비 중 상태로 표시
+      const CATEGORY_TABS = [
+        { key: "metro", label: "수도권 지하철" },
+        { key: "busan", label: "부산" },
+        { key: "daegu", label: "대구" },
+        { key: "gwangju", label: "광주" },
+        { key: "daejeon", label: "대전" },
+        { key: "highspeed", label: "고속철도" },
+        { key: "trunk", label: "간선철도" },
+      ];
+
+      let currentTab = "metro";
+      let currentStats = [];
+
+      /* 노선의 방문 인증 완료 개수 (localStorage: {id}_verified_stations) */
+      function getVerifiedCount(lineId) {
+        try {
+          const raw = localStorage.getItem(`${lineId}_verified_stations`);
+          if (!raw) return 0;
+          const parsed = JSON.parse(raw);
+          return Object.values(parsed).filter((v) => v === true).length;
+        } catch (e) {
+          return 0;
+        }
+      }
+
+      /*
+       * 노선의 전체 역 개수를 구함.
+       * 1순위: 해당 노선 페이지를 방문했을 때 캐시된 실제 총 역 개수 (line-core.js에서 저장)
+       * 2순위: 내장 기본 데이터베이스(stations-db.js)의 역 개수 (근사치)
+       * 둘 다 없으면 null (아직 확인 불가)
+       */
+      function getTotalCount(line) {
+        const cached = localStorage.getItem(`${line.id}_total_stations`);
+        if (cached && parseInt(cached, 10) > 0) {
+          return { total: parseInt(cached, 10), exact: true };
+        }
+        if (
+          line.dbKey &&
+          typeof window.DEFAULT_STATION_DB !== "undefined" &&
+          Array.isArray(window.DEFAULT_STATION_DB[line.dbKey])
+        ) {
+          return {
+            total: window.DEFAULT_STATION_DB[line.dbKey].length,
+            exact: false,
+          };
+        }
+        return { total: null, exact: false };
+      }
+
+      function buildLineStats() {
+        return MYPAGE_LINES.map((line) => {
+          const verified = getVerifiedCount(line.id);
+          const { total, exact } = getTotalCount(line);
+          const percentage =
+            total && total > 0 ? Math.round((verified / total) * 100) : null;
+          return { ...line, verified, total, percentage, exact };
+        });
+      }
+
+      function renderSummary(stats) {
+        const knownStats = stats.filter((s) => s.total !== null);
+        const unknownCount = stats.length - knownStats.length;
+
+        const sumVerified = knownStats.reduce((acc, s) => acc + s.verified, 0);
+        const sumTotal = knownStats.reduce((acc, s) => acc + s.total, 0);
         const overallPercent =
-          allUniqueNames.size > 0
-            ? Math.round((totalVerifiedAll / allUniqueNames.size) * 100)
-            : 0;
-        document.getElementById("totalStationCount").innerText =
-          allUniqueNames.size;
-        document.getElementById("totalVerifiedCount").innerText =
-          totalVerifiedAll;
+          sumTotal > 0 ? Math.round((sumVerified / sumTotal) * 100) : 0;
+
         document.getElementById(
-          "totalPercentText"
+          "summaryPercent"
         ).innerText = `${overallPercent}%`;
         document.getElementById(
-          "totalProgressFill"
+          "summaryProgressFill"
         ).style.width = `${overallPercent}%`;
-        document.getElementById("exportText").value =
-          JSON.stringify(combinedBackupData);
+        document.getElementById("verifiedTotal").innerText = sumVerified;
+        document.getElementById("stationTotal").innerText = sumTotal;
+
+        const noteEl = document.getElementById("summaryNote");
+        let note = "현재는 수도권 지하철 기준으로 집계돼요.";
+        if (unknownCount > 0) {
+          note += ` 아직 방문하지 않은 ${unknownCount}개 노선은 페이지를 한 번 열어보면 반영돼요.`;
+        }
+        noteEl.innerText = note;
+      }
+
+      function renderTopPreview(stats) {
+        const withProgress = stats
+          .filter((s) => s.total !== null && s.verified > 0)
+          .sort((a, b) => b.percentage - a.percentage)
+          .slice(0, 3);
+
+        const section = document.getElementById("topPreviewSection");
+        const list = document.getElementById("topPreviewList");
+
+        if (withProgress.length === 0) {
+          section.style.display = "none";
+          return;
+        }
+
+        section.style.display = "block";
+        list.innerHTML = withProgress
+          .map(
+            (s) => `
+          <div class="mini-row">
+            <div class="mini-badge" style="background-color:${
+              s.color
+            };">${escapeHtml(shortLabel(s.name))}</div>
+            <div class="mini-info">
+              <div class="mini-name">${escapeHtml(s.name)}</div>
+              <div class="mini-bar-bg">
+                <div class="mini-bar-fill" style="width:${
+                  s.percentage
+                }%; background-color:${s.color};"></div>
+              </div>
+            </div>
+            <div class="mini-percent">${s.percentage}%</div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      function shortLabel(name) {
+        // 배지에 넣을 짧은 표기 (예: "1호선" -> "1", "경의중앙선" -> "경의중앙")
+        return name.replace(/호선$/, "").replace(/선$/, "");
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.innerText = str;
+        return div.innerHTML;
+      }
+
+      /* 수도권 지하철 탭: 서울 수도권/인천/광역/경기 구분선 + 실제 진행도 */
+      function renderMetroTab(stats) {
+        const sections = ["서울 수도권", "인천", "광역", "경기"];
+        const body = document.getElementById("sheetBody");
+        let html = "";
+
+        sections.forEach((sectionName) => {
+          const linesInSection = stats.filter((s) => s.section === sectionName);
+          if (linesInSection.length === 0) return;
+
+          html += `<div class="sheet-divider"><span>${sectionName}</span></div>`;
+
+          linesInSection.forEach((s) => {
+            const badgeLabel = shortLabel(s.name);
+            if (s.total !== null) {
+              html += `
+                <a class="line-row" href="${s.link}">
+                  <div class="line-badge" style="background-color:${
+                    s.color
+                  };">${escapeHtml(badgeLabel)}</div>
+                  <div class="line-info">
+                    <div class="line-name-row">
+                      <span class="line-name">${escapeHtml(s.name)}</span>
+                      <span class="line-stat"><b>${s.verified}</b> / ${
+                s.total
+              }개 (${s.percentage}%)</span>
+                    </div>
+                    <div class="line-bar-bg">
+                      <div class="line-bar-fill" style="width:${
+                        s.percentage
+                      }%; background-color:${s.color};"></div>
+                    </div>
+                  </div>
+                </a>
+              `;
+            } else {
+              html += `
+                <a class="line-row" href="${s.link}">
+                  <div class="line-badge" style="background-color:${
+                    s.color
+                  }; opacity:0.55;">${escapeHtml(badgeLabel)}</div>
+                  <div class="line-info">
+                    <div class="line-name-row">
+                      <span class="line-name">${escapeHtml(s.name)}</span>
+                      <span class="line-stat">방문 전</span>
+                    </div>
+                    <div class="line-bar-bg">
+                      <div class="line-bar-fill unknown" style="width:100%;"></div>
+                    </div>
+                    <div class="line-unvisited-label">노선을 열어보면 진행도가 표시돼요</div>
+                  </div>
+                </a>
+              `;
+            }
+          });
+        });
+
+        body.innerHTML = html;
+      }
+
+      /* 아직 진행도 데이터가 없는 카테고리(다른 지역/고속철/간선철도)의 준비중 상태 */
+      function renderPlaceholderTab(tabKey) {
+        const body = document.getElementById("sheetBody");
+        const list = OTHER_CATEGORY_DATA[tabKey] || [];
+
+        if (list.length === 0) {
+          body.innerHTML = `<div class="empty-note">등록된 노선 정보가 없어요.</div>`;
+          return;
+        }
+
+        body.innerHTML = list
+          .map(
+            (item) => `
+          <div class="line-row placeholder-row">
+            <div class="line-badge" style="background-color:${
+              item.color
+            }; opacity:0.5;">${escapeHtml(item.num)}</div>
+            <div class="line-info">
+              <div class="line-name-row">
+                <span class="line-name">${escapeHtml(item.num)}${escapeHtml(
+              item.unit || ""
+            )}</span>
+                <span class="line-stat">준비 중</span>
+              </div>
+              <div class="line-bar-bg">
+                <div class="line-bar-fill unknown" style="width:100%;"></div>
+              </div>
+              <div class="line-unvisited-label">인증 기능이 추가되면 여기에 표시돼요</div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      function renderTabBar() {
+        const tabsEl = document.getElementById("mpTabs");
+        tabsEl.innerHTML = CATEGORY_TABS.map(
+          (tab) =>
+            `<button class="mp-tab ${
+              tab.key === currentTab ? "active" : ""
+            }" data-tab="${tab.key}">${tab.label}</button>`
+        ).join("");
+
+        tabsEl.querySelectorAll(".mp-tab").forEach((btn) => {
+          btn.addEventListener("click", () => selectTab(btn.dataset.tab));
+        });
+      }
+
+      function selectTab(key) {
+        currentTab = key;
+        document.querySelectorAll(".mp-tab").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.tab === key);
+        });
+        renderTabContent(key);
+      }
+
+      function renderTabContent(tabKey) {
+        if (tabKey === "metro") {
+          renderMetroTab(currentStats);
+        } else {
+          renderPlaceholderTab(tabKey);
+        }
       }
 
       function openLineModal() {
         document.getElementById("lineModal").classList.add("show");
+        renderTabContent(currentTab);
       }
       function closeLineModal() {
         document.getElementById("lineModal").classList.remove("show");
       }
-      function openBackupModal() {
-        document.getElementById("backupModal").classList.add("show");
+
+      document.getElementById("lineModal").addEventListener("click", (e) => {
+        if (e.target.id === "lineModal") closeLineModal();
+      });
+
+      // ==========================================
+      // 데이터 관리: 백업 / 복원 / 초기화
+      // ==========================================
+
+      const STORAGE_KEY_PATTERN = /(_verified_stations|_total_stations)$/;
+
+      function collectManagedStorage() {
+        const data = {};
+        Object.keys(localStorage).forEach((k) => {
+          if (STORAGE_KEY_PATTERN.test(k)) {
+            data[k] = localStorage.getItem(k);
+          }
+        });
+        return data;
       }
-      function closeBackupModal() {
-        document.getElementById("backupModal").classList.remove("show");
+
+      function backupData() {
+        const data = collectManagedStorage();
+        if (Object.keys(data).length === 0) {
+          alert("아직 백업할 인증 데이터가 없어요.");
+          return;
+        }
+
+        const payload = {
+          app: "subway-cert-mypage",
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          data,
+        };
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const dateStr = payload.exportedAt.slice(0, 10);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `지하철인증_백업_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       }
-      function switchRegionTab(code) {
-        document
-          .querySelectorAll(".region-tab-content")
-          .forEach((c) => c.classList.remove("active"));
-        document
-          .querySelectorAll("#regionTabMenu .tab-link")
-          .forEach((l) => l.classList.remove("active"));
-        document.getElementById(`region-${code}`).classList.add("active");
-        event.target.classList.add("active");
+
+      function triggerRestore() {
+        document.getElementById("restoreInput").click();
       }
-      function switchTab(tabId) {
-        document
-          .querySelectorAll("#backupModal .tab-content")
-          .forEach((t) => t.classList.remove("active"));
-        document
-          .querySelectorAll("#backupModal .tab-link")
-          .forEach((l) => l.classList.remove("active"));
-        document.getElementById(tabId).classList.add("active");
-        event.target.classList.add("active");
-      }
-      function copyBackupCode() {
-        const el = document.getElementById("exportText");
-        el.select();
-        navigator.clipboard
-          .writeText(el.value)
-          .then(() => alert("복사되었습니다!"));
-      }
-      function applyBackupCode() {
-        try {
-          const parsed = JSON.parse(
-            document.getElementById("importText").value.trim()
-          );
-          Object.keys(parsed).forEach((id) => {
-            if (parsed[id] && stationMaster[id]) {
-              getLinesFromStation(stationMaster[id]).forEach((line) => {
-                const key = getStorageKeyByLineName(line);
-                const saved = JSON.parse(localStorage.getItem(key) || "{}");
-                saved[id] = true;
-                localStorage.setItem(key, JSON.stringify(saved));
-              });
+
+      function handleRestoreFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const parsed = JSON.parse(e.target.result);
+            if (!parsed || typeof parsed.data !== "object") {
+              throw new Error("invalid backup file");
             }
-          });
-          renderProgressSummary();
-          closeBackupModal();
-          alert("복구 완료!");
-        } catch (e) {
-          alert("올바르지 않은 코드입니다.");
-        }
+
+            const keyCount = Object.keys(parsed.data).length;
+            const ok = confirm(
+              `백업 파일(${keyCount}개 노선 데이터)로 복원할까요?\n현재 기기의 기존 인증 데이터는 덮어써져요.`
+            );
+            if (!ok) {
+              event.target.value = "";
+              return;
+            }
+
+            Object.entries(parsed.data).forEach(([key, value]) => {
+              if (STORAGE_KEY_PATTERN.test(key)) {
+                localStorage.setItem(key, value);
+              }
+            });
+
+            init();
+            alert("복원이 완료되었습니다.");
+          } catch (err) {
+            console.error("복원 실패:", err);
+            alert("올바른 백업 파일이 아니에요.");
+          } finally {
+            event.target.value = "";
+          }
+        };
+        reader.readAsText(file);
       }
-      function resetData() {
-        if (confirm("모든 기록을 삭제하시겠습니까?")) {
-          localStorage.clear();
-          renderProgressSummary();
-          alert("초기화 완료");
-        }
+
+      function resetAllData() {
+        const ok = confirm(
+          "모든 노선의 방문 인증 데이터를 초기화할까요?\n이 작업은 되돌릴 수 없어요. (필요하면 먼저 백업하세요)"
+        );
+        if (!ok) return;
+
+        Object.keys(localStorage).forEach((k) => {
+          if (STORAGE_KEY_PATTERN.test(k)) {
+            localStorage.removeItem(k);
+          }
+        });
+
+        init();
+        alert("모든 인증 데이터가 초기화되었습니다.");
       }
+
+      // ==========================================
+      // 초기화
+      // ==========================================
+      function init() {
+        currentStats = buildLineStats();
+        renderSummary(currentStats);
+        renderTopPreview(currentStats);
+        renderTabBar();
+        renderTabContent(currentTab);
+      }
+
+      init();
     </script>
   </body>
 </html>
